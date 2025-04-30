@@ -138,16 +138,15 @@ def train_image():
         success = trainer.add_training_sample(filepath, results)
         
         if success:
-            return jsonify({
-                'status': 'success',
-                'message': 'Image successfully trained',
-                'filename': unique_filename
-            })
+            # Return a proper HTML response with the success message
+            return render_template('training_success.html', 
+                                  filename=unique_filename, 
+                                  message="Image successfully trained")
         else:
-            return jsonify({
-                'status': 'error',
-                'message': 'Failed to train image'
-            }), 500
+            # Return a proper HTML response with the error message
+            return render_template('training_success.html', 
+                                  error="Failed to train image", 
+                                  error_message="There was a problem processing your image.")
     
     return jsonify({'error': 'Invalid file type'}), 400
 

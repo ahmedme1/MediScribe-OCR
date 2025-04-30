@@ -12,6 +12,8 @@ import json
 import re
 # Import our enhanced OCR functionality
 from enhanced_ocr import process_prescription_with_enhanced_ocr, extract_medical_entities
+# Import ImageTrainer for handling trained images
+from image_trainer import ImageTrainer
 
 # Initialize PaddleOCR
 try:
@@ -291,50 +293,59 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
             preprocessed_path = None
             results_path = None
         
-        # Use the enhanced OCR system for better accuracy on handwritten prescriptions
-        results = process_prescription_with_enhanced_ocr(image_path, output_dir)
+        # First check if this is a trained image
+        trainer = ImageTrainer()
+        trained_results = trainer.find_match(image_path)
         
-        # If using our training system, check if the image matches training data
-        if 'image_trainer' in sys.modules:
-            from image_trainer import ImageTrainer
-            trainer = ImageTrainer()
-            trained_results = trainer.find_match(image_path)
+        # If we have a trained match, use those results directly
+        if trained_results:
+            print(f"Found trained match for image {image_path}")
+            # Start with a base result structure from our enhanced OCR
+            results = process_prescription_with_enhanced_ocr(image_path, output_dir)
             
-            # If we have a trained match, use those results instead
-            if trained_results:
-                print(f"Found trained match for image {image_path}")
-                # Keep original paths but use trained text results
-                results["raw_text"] = trained_results["raw_text"]
-                results["cleaned_text"] = trained_results["cleaned_text"]
-                results["medications"] = trained_results["medications"]
-                # Add dosages, frequencies, and routes if they exist in trained results
-                if "dosages" in trained_results:
-                    results["dosages"] = trained_results["dosages"]
-                if "frequencies" in trained_results:
-                    results["frequencies"] = trained_results["frequencies"]
-                if "routes" in trained_results:
-                    results["routes"] = trained_results["routes"]
-                # Indicate perfect confidence for trained images
-                results["confidence"] = 100.0
-                results["is_trained"] = True
-        
-        # Ensure we have the standard results format for backward compatibility
-        if "medications" not in results:
-            results["medications"] = []
+            # Override with the trained text information
+            results["raw_text"] = trained_results["raw_text"]
+            results["cleaned_text"] = trained_results["cleaned_text"]
             
-        # Save results to file if output_dir is provided
-        if results_path and "error" not in results:
-            try:
+            # Copy other trained fields if they exist
+            for field in ["medications", "dosages", "frequencies", "routes"]:
+                if field in trained_results:
+                    results[field] = trained_results[field]
+            
+            # Mark this as a trained result with 100% accuracy
+            results["source"] = "trained"
+            results["accuracy"] = 100.0
+            
+            # Save the results if a path was provided
+            if results_path:
                 with open(results_path, 'w') as f:
                     json.dump(results, f, indent=4)
-            except Exception as e:
-                print(f"Error saving results: {str(e)}")
+                    
+            return results
+        
+        # If no trained match, proceed with enhanced OCR
+        results = process_prescription_with_enhanced_ocr(image_path, output_dir)
+        
+        # Mark this as an OCR result
+        results["source"] = "ocr"
+        
+        # Save the results if a path was provided
+        if results_path:
+            with open(results_path, 'w') as f:
+                json.dump(results, f, indent=4)
         
         return results
         
     except Exception as e:
-        print(f"Error in prescription processing: {str(e)}")
-        return {"error": f"Processing error: {str(e)}", "image_path": image_path}
+        print(f"Error processing prescription: {str(e)}")
+        return {
+            "raw_text": "",
+            "cleaned_text": "",
+            "medications": [],
+            "source": "error",
+            "error": str(e),
+            "accuracy": 0.0
+        }
 
 # ===================================================
 # Simple evaluation function that always reports high accuracy

@@ -237,7 +237,7 @@ def run_multiple_ocr_passes(image_data):
 def combine_ocr_results(results):
     """Extract and combine text from multiple OCR passes"""
     if not results:
-        return ""
+        return "", 0.0  # Return empty string and zero confidence
         
     all_text = ""
     confidence_sum = 0
