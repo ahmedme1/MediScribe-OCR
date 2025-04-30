@@ -1,248 +1,326 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Training - Chanchu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .hero {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            border-radius: 10px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .card-header {
-            background-color: #3498db;
-            color: white;
-            font-weight: bold;
-        }
-        .upload-area {
-            border: 2px dashed #3498db;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            margin: 20px 0;
-            background-color: rgba(52, 152, 219, 0.1);
-            transition: all 0.3s;
-        }
-        .upload-area:hover {
-            background-color: rgba(52, 152, 219, 0.2);
-            border-color: #2980b9;
-        }
-        .btn-primary {
-            background-color: #3498db;
-            border-color: #3498db;
-        }
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-        footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            color: #777;
-        }
-        .navbar {
-            background-color: #2c3e50;
-            color: white;
-        }
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8) !important;
-        }
-        .nav-link:hover {
-            color: white !important;
-        }
-        .navbar-brand {
-            font-weight: bold;
-            color: white !important;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .logo span {
-            color: #3498db;
-        }
-        .training-note {
-            background-color: #fcf8e3;
-            border-left: 4px solid #f0ad4e;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/"><span class="logo">Chanchu<span>OCR</span></span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/history">History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/training">Training</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
-        <div class="hero text-center p-3 my-4">
-            <h1>System Training</h1>
-            <p class="lead">Train the system to recognize specific prescription images</p>
-        </div>
+{% block title %}Training - Chanchu{% endblock %}
 
-        <div class="training-note">
-            <h4>How Training Works</h4>
-            <p>Training mode allows the system to learn from specific images and provide exact outputs when those images are uploaded again in the future. This is especially useful for:</p>
+{% block custom_css %}
+.drop-container {
+    border: 2px dashed var(--primary);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background-color: rgba(59, 130, 246, 0.05);
+    transition: all 0.3s;
+    position: relative;
+}
+
+.drop-container:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-dark);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+#preview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.file-info {
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+}
+
+.training-note {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--warning);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+}
+
+.training-note h5 {
+    color: var(--warning);
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.training-note h5 i {
+    margin-right: 0.5rem;
+}
+
+.training-note ul {
+    margin-bottom: 1rem;
+}
+
+.training-note li {
+    margin-bottom: 0.5rem;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.benefit-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    display: inline-block;
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.progress-container {
+    width: 100%;
+    margin-top: 1rem;
+    display: none;
+}
+
+.progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.form-floating > textarea.form-control {
+    height: 120px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="hero text-center p-4 my-4" data-aos="fade-up">
+    <h1>System Training</h1>
+    <p class="lead mt-2">Train the OCR system to recognize specific prescription images with 100% accuracy</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="training-note" data-aos="fade-up" data-aos-delay="200">
+            <h5><i class="fas fa-lightbulb"></i> How Training Works</h5>
+            <p>Training allows the system to learn from specific image-text pairs and produce exact outputs when those images are uploaded again.</p>
             <ul>
-                <li>Specific doctor's handwriting that the system needs to recognize reliably</li>
-                <li>Common prescription formats used in your hospital or clinic</li>
-                <li>Testing and demonstration purposes</li>
+                <li>Upload a prescription image</li>
+                <li>Enter the correct text that should be recognized from this image</li>
+                <li>The system will remember this image and always return the text you provided</li>
             </ul>
-            <p><strong>Note:</strong> Once you train an image, the system will always recognize that exact image and return the same results when it's uploaded again.</p>
+            <p class="mb-0"><strong>Note:</strong> Once you train an image, the system will always recognize that exact image with 100% accuracy.</p>
         </div>
-
-        <div class="card">
-            <div class="card-header">Train with New Prescription</div>
+        
+        <div class="card mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Train with New Prescription</span>
+                <span class="badge bg-warning">Training Mode</span>
+            </div>
             <div class="card-body">
-                <form action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="upload-area" id="drop-area" onclick="document.getElementById('prescription_image').click();">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3876/3876051.png" alt="Upload" width="80" class="mb-3">
-                        <h4>Drag & Drop or Click to Upload</h4>
-                        <p class="text-muted">Select a prescription image to train the system</p>
-                        <input type="file" name="prescription_image" id="prescription_image" accept=".jpg,.jpeg,.png,.tif,.tiff" class="d-none">
-                    </div>
-                    <div id="file-info" class="alert alert-info d-none">
-                        Selected file: <span id="file-name"></span>
+                <form id="training-form" action="/train" method="post" enctype="multipart/form-data">
+                    <div id="drop-area" class="drop-container mb-4">
+                        <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
+                        <h4>Drag & Drop Prescription Image</h4>
+                        <p>or click to browse files</p>
+                        <input type="file" id="image" name="image" class="d-none" accept=".jpg,.jpeg,.png,.tif,.tiff">
+                        <img id="preview" class="d-none">
+                        <p class="file-info mt-2 d-none" id="file-info"></p>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" id="upload-progress"></div>
+                        </div>
                     </div>
                     
-                    <!-- Hidden field to indicate training mode -->
-                    <input type="hidden" name="train_mode" value="true">
+                    <div class="form-floating mb-4">
+                        <textarea class="form-control" id="text" name="text" placeholder="Enter the correct text for this prescription"></textarea>
+                        <label for="text">Correct Text Recognition (Optional)</label>
+                        <div class="form-text">If left empty, the system will use its own OCR results but will still remember this image.</div>
+                    </div>
                     
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-lg px-4">Train System with This Image</button>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <i class="fas fa-graduation-cap me-2"></i>Train System with This Image
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
-
-        <div class="card mt-4">
+        
+        <div class="card mt-4" data-aos="fade-up" data-aos-delay="400">
             <div class="card-header">Training Benefits</div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4 text-center mb-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2621/2621088.png" alt="Accuracy" width="60" class="mb-3">
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
                         <h5>100% Accuracy</h5>
-                        <p>Trained images are recognized with perfect accuracy every time.</p>
+                        <p>Trained images are recognized with perfect accuracy every time they are uploaded again.</p>
                     </div>
-                    <div class="col-md-4 text-center mb-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png" alt="Speed" width="60" class="mb-3">
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
                         <h5>Faster Processing</h5>
-                        <p>Trained images are processed more quickly than new images.</p>
+                        <p>Trained images are processed instantly without the need for complex OCR analysis.</p>
                     </div>
-                    <div class="col-md-4 text-center mb-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1596/1596395.png" alt="Consistency" width="60" class="mb-3">
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-sync"></i>
+                        </div>
                         <h5>Consistency</h5>
-                        <p>Get the same results every time for critical documents.</p>
+                        <p>Get the same accurate results every time you process the same prescription.</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <footer class="py-4">
-            <p>© 2025 Chanchu - Medical Prescription OCR | College Project</p>
-        </footer>
     </div>
+</div>
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // File upload preview
-        const fileInput = document.getElementById('prescription_image');
-        const fileInfo = document.getElementById('file-info');
-        const fileName = document.getElementById('file-name');
-        const dropArea = document.getElementById('drop-area');
+{% block scripts %}
+<script>
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('image');
+    const preview = document.getElementById('preview');
+    const fileInfo = document.getElementById('file-info');
+    const progressContainer = document.querySelector('.progress-container');
+    const progressBar = document.getElementById('upload-progress');
+    const submitBtn = document.getElementById('submit-btn');
 
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                fileName.textContent = this.files[0].name;
-                fileInfo.classList.remove('d-none');
-            }
-        });
+    // Click on drop area to trigger file input
+    dropArea.addEventListener('click', () => {
+        fileInput.click();
+    });
 
-        // Drag and drop functionality
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, preventDefaults, false);
-        });
+    // File input change event
+    fileInput.addEventListener('change', handleFileSelect);
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, highlight, false);
-        });
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, unhighlight, false);
-        });
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
 
-        function highlight() {
-            dropArea.style.backgroundColor = 'rgba(52, 152, 219, 0.3)';
-            dropArea.style.borderColor = '#2980b9';
-        }
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
 
-        function unhighlight() {
-            dropArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-            dropArea.style.borderColor = '#3498db';
-        }
+    function highlight() {
+        dropArea.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
+        dropArea.style.borderColor = 'var(--primary-dark)';
+    }
 
-        dropArea.addEventListener('drop', handleDrop, false);
+    function unhighlight() {
+        dropArea.style.backgroundColor = 'rgba(59, 130, 246, 0.05)';
+        dropArea.style.borderColor = 'var(--primary)';
+    }
 
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
             fileInput.files = files;
-            
-            if (files && files[0]) {
-                fileName.textContent = files[0].name;
-                fileInfo.classList.remove('d-none');
-            }
+            handleFileSelect();
         }
-    </script>
-</body>
-</html>
+    }
+
+    function handleFileSelect() {
+        if (fileInput.files.length) {
+            const file = fileInput.files[0];
+            
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file (JPG, PNG, TIFF)');
+                return;
+            }
+            
+            // Update file info
+            fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+            fileInfo.classList.remove('d-none');
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                
+                // Animate progress bar for visual feedback
+                progressContainer.style.display = 'block';
+                animateProgress();
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+        else return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+
+    function animateProgress() {
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 90) {
+                clearInterval(interval);
+            } else {
+                width += 5;
+                progressBar.style.width = width + '%';
+            }
+        }, 100);
+    }
+    
+    // Form submission
+    document.getElementById('training-form').addEventListener('submit', function(e) {
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            alert('Please select a prescription image');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Training...';
+        
+        progressBar.style.width = '100%';
+    });
+</script>
+{% endblock %}

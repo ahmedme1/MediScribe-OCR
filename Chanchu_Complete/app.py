@@ -2,11 +2,19 @@ from flask import Flask, request, render_template, jsonify, url_for, redirect, s
 import os
 import json
 import time
+import datetime
 from werkzeug.utils import secure_filename
 from prescription_ocr import process_prescription, evaluate_accuracy
 from image_trainer import ImageTrainer
 
 app = Flask(__name__)
+
+# Custom Jinja2 filter for timestamp conversion
+@app.template_filter('timestamp_to_date')
+def timestamp_to_date(timestamp):
+    """Convert a Unix timestamp to a formatted date string"""
+    dt = datetime.datetime.fromtimestamp(timestamp)
+    return dt.strftime('%B %d, %Y at %I:%M %p')
 
 # Configure upload folder and allowed extensions
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
