@@ -35,8 +35,8 @@ def evaluate_ocr(output_text, ground_truth):
 # Example Usage
 if __name__ == "__main__":
     # Provide the exact path to your image file
-    image_path = "C:\\Users\\SAI\\OneDrive\\Desktop\\Chanchu\\Image_3.jpg"  # Path to Image_3.jpg
-    preprocessed_img = preprocess_image(image_path)
+    image_path = "C:\\Users\\SAI\\OneDrive\\Desktop\\Chanchu\\Image_4.jpg"  # Path to Image_3.jpg
+    preprocessed_img = preprocess_image("C:\\Users\\SAI\\OneDrive\\Desktop\\Chanchu\\Image_4.jpg")
     cv2.imwrite("preprocessed.png", preprocessed_img)  # Save preprocessed image
     
     extracted_text = perform_ocr(image_path)

@@ -2,6 +2,8 @@ import cv2
 import pytesseract
 from matplotlib import pyplot as plt
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Users\Shriram\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
+
 def preprocess_image(image_path):
     # Load image
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
@@ -33,5 +35,5 @@ def extract_text_from_image(image_path):
 
 # Example usage
 if __name__ == "__main__":
-    image_path = 'Image_2.png'
+    image_path = 'Raw_Image_5.jpg'
     extract_text_from_image(image_path)

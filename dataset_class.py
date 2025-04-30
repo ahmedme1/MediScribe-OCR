@@ -41,7 +41,7 @@ transform = transforms.Compose([
 ])
 
 # Example image paths and labels (replace with your actual data)
-image_paths = ["C:\\Users\\SAI\\OneDrive\\Desktop\\Chanchu\\output_2.png"]
+image_paths = ["C:\\Users\\Shriram\\Downloads\\Chanchu\\Chanchu\\output_2.png"]
 labels = ["example_label"]
 
 # Create an instance of the dataset
