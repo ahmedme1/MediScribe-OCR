@@ -4,6 +4,7 @@ import json
 import time
 from werkzeug.utils import secure_filename
 from prescription_ocr import process_prescription, evaluate_accuracy
+from image_trainer import ImageTrainer
 
 app = Flask(__name__)
 
@@ -88,6 +89,59 @@ def upload_file():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/training')
+def training():
+    return render_template('training.html')
+
+@app.route('/train', methods=['POST'])
+def train_image():
+    # Check if a file was included in the request
+    if 'image' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['image']
+    text_data = request.form.get('text', '')
+    
+    # Check if a file was selected
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    # Check if the file has an allowed extension
+    if file and allowed_file(file.filename):
+        # Secure the filename and save it
+        filename = secure_filename(file.filename)
+        timestamp = int(time.time())
+        unique_filename = f"{timestamp}_{filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        file.save(filepath)
+        
+        # Process the image to get OCR results
+        results = process_prescription(filepath, app.config['RESULTS_FOLDER'])
+        
+        # If user provided custom text, replace the OCR results
+        if text_data:
+            # Update the results with the user-provided text
+            results['raw_text'] = text_data
+            results['cleaned_text'] = text_data.lower()
+        
+        # Create a trainer instance and add the sample
+        trainer = ImageTrainer()
+        success = trainer.add_training_sample(filepath, results)
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': 'Image successfully trained',
+                'filename': unique_filename
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to train image'
+            }), 500
+    
+    return jsonify({'error': 'Invalid file type'}), 400
 
 @app.route('/history')
 def history():
