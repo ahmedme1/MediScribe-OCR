@@ -37,5 +37,23 @@
             "source": "trained",
             "accuracy": 100.0
         }
+    },
+    "fabd23de00794181efe4c3037065bd2e": {
+        "perceptual_hash": "1101010011111011001010000011111110101010010000011001011111000000",
+        "image_path": "training_data\\images\\fabd23de00794181efe4c3037065bd2e.png",
+        "ocr_results": {
+            "image_path": "c:\\Users\\Shriram\\Downloads\\Chanchu\\Chanchu\\Chanchu_Complete\\uploads\\1746024917_Blank_diagram_-_Page_1_1.png",
+            "preprocessed_image": "c:\\Users\\Shriram\\Downloads\\Chanchu\\Chanchu\\Chanchu_Complete\\uploads\\enhanced_1746024917_Blank_diagram_-_Page_1_1.png",
+            "raw_text": "hello world",
+            "cleaned_text": "hello world",
+            "medications": [
+                "metoprolol"
+            ],
+            "dosages": [],
+            "frequencies": [],
+            "routes": [],
+            "confidence": 96.86225284006179,
+            "source": "ocr"
+        }
     }
 }

@@ -83,41 +83,6 @@ pre {
     word-wrap: break-word;
     border: 1px solid #e9ecef;
 }
-
-.source-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-    animation: pulse 2s infinite;
-}
-
-.trained-indicator {
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    color: white;
-    border-radius: 4px;
-    padding: 8px 16px;
-    margin-bottom: 16px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.trained-indicator i {
-    margin-right: 8px;
-    font-size: 1.2rem;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-}
 {% endblock %}
 
 {% block content %}
@@ -138,35 +103,10 @@ pre {
 <div class="card mb-4" data-aos="fade-up" data-aos-delay="100">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span>Recognition Results</span>
-        {% if results.source == "trained" %}
-        <span class="badge bg-success accuracy-badge">100% Accuracy (Trained Image)</span>
-        {% else %}
         <span class="badge bg-info accuracy-badge">{{ results.accuracy.overall_accuracy }}% Estimated Accuracy</span>
-        {% endif %}
     </div>
     <div class="card-body">
-        {% if results.source == "trained" %}
-        <div class="trained-indicator" data-aos="fade-right">
-            <i class="fas fa-graduation-cap"></i>
-            <span>This prescription was recognized using training data you provided</span>
-        </div>
-        {% endif %}
-        
         <div class="stats">
-            {% if results.source == "trained" %}
-            <div class="stat-card" data-aos="flip-up" data-aos-delay="150">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">Character Accuracy</div>
-            </div>
-            <div class="stat-card" data-aos="flip-up" data-aos-delay="200">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">Word Accuracy</div>
-            </div>
-            <div class="stat-card" data-aos="flip-up" data-aos-delay="250">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">Medication Accuracy</div>
-            </div>
-            {% else %}
             <div class="stat-card" data-aos="flip-up" data-aos-delay="150">
                 <div class="stat-value">{{ results.accuracy.character_accuracy }}%</div>
                 <div class="stat-label">Character Accuracy</div>
@@ -179,37 +119,19 @@ pre {
                 <div class="stat-value">{{ results.accuracy.medication_accuracy }}%</div>
                 <div class="stat-label">Medication Accuracy</div>
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
 <!-- Images Section -->
 <div class="row">
-    <div class="col-md-6" data-aos="fade-right" data-aos-delay="300">
+    <div class="col-md-12" data-aos="fade-up" data-aos-delay="300">
         <div class="card mb-4">
             <div class="card-header">Original Prescription</div>
             <div class="card-body">
                 <div class="image-container position-relative">
-                    {% if results.source == "trained" %}
-                    <span class="badge bg-success source-badge">Trained</span>
-                    {% endif %}
                     <img src="{{ original_image }}" alt="Original Prescription" class="img-fluid">
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6" data-aos="fade-left" data-aos-delay="350">
-        <div class="card mb-4">
-            <div class="card-header">Preprocessed Image</div>
-            <div class="card-body">
-                {% if results.preprocessed_url %}
-                <div class="image-container">
-                    <img src="{{ results.preprocessed_url }}" alt="Preprocessed Image" class="img-fluid">
-                </div>
-                {% else %}
-                <p class="text-muted">No preprocessed image available</p>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -219,12 +141,7 @@ pre {
 <div class="row">
     <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
         <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Extracted Text</span>
-                {% if results.source == "trained" %}
-                <span class="badge bg-success">Trained Text</span>
-                {% endif %}
-            </div>
+            <div class="card-header">Extracted Text</div>
             <div class="card-body">
                 <pre>{{ results.raw_text }}</pre>
             </div>

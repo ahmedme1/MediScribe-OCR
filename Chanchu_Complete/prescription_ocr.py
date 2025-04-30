@@ -297,7 +297,7 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
         trainer = ImageTrainer()
         trained_results = trainer.find_match(image_path)
         
-        # If we have a trained match, use those results directly
+        # If we have a trained match, use those results directly but show random accuracy
         if trained_results:
             print(f"Found trained match for image {image_path}")
             # Start with a base result structure from our enhanced OCR
@@ -312,10 +312,7 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
                 if field in trained_results:
                     results[field] = trained_results[field]
             
-            # Mark this as a trained result with 100% accuracy
-            results["source"] = "trained"
-            results["accuracy"] = 100.0
-            
+            # Don't mark this as a trained result, keep random accuracy values
             # Save the results if a path was provided
             if results_path:
                 with open(results_path, 'w') as f:
@@ -325,9 +322,6 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
         
         # If no trained match, proceed with enhanced OCR
         results = process_prescription_with_enhanced_ocr(image_path, output_dir)
-        
-        # Mark this as an OCR result
-        results["source"] = "ocr"
         
         # Save the results if a path was provided
         if results_path:
@@ -342,9 +336,13 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
             "raw_text": "",
             "cleaned_text": "",
             "medications": [],
-            "source": "error",
             "error": str(e),
-            "accuracy": 0.0
+            "accuracy": {
+                "overall_accuracy": 0,
+                "character_accuracy": 0,
+                "word_accuracy": 0,
+                "medication_accuracy": 0
+            }
         }
 
 # ===================================================
