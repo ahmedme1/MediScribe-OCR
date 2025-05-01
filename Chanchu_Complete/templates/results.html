@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}OCR Results - Chanchu{% endblock %}
+{% block title %}OCR Results - MediScribe AI{% endblock %}
 
 {% block custom_css %}
 .accuracy-badge {
@@ -83,6 +83,18 @@ pre {
     word-wrap: break-word;
     border: 1px solid #e9ecef;
 }
+
+.prescription-text {
+    max-height: 300px;
+    overflow-y: auto;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    background-color: #f8f9fa;
+    padding: 15px;
+    color: #333;
+    border: 1px solid #e9ecef;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
 {% endblock %}
 
 {% block content %}
@@ -139,19 +151,23 @@ pre {
 
 <!-- Text Results Section -->
 <div class="row">
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+    <div class="col-md-12" data-aos="fade-up" data-aos-delay="400">
         <div class="card mb-4">
-            <div class="card-header">Extracted Text</div>
+            <div class="card-header">Extracted Prescription Text</div>
             <div class="card-body">
-                <pre>{{ results.raw_text }}</pre>
+                <pre class="prescription-text">{{ results.raw_text }}</pre>
             </div>
         </div>
     </div>
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="450">
+</div>
+
+<!-- Cleaned Text Section -->
+<div class="row">
+    <div class="col-md-12" data-aos="fade-up" data-aos-delay="450">
         <div class="card mb-4">
             <div class="card-header">Cleaned Text</div>
             <div class="card-body">
-                <pre>{{ results.cleaned_text }}</pre>
+                <pre class="prescription-text">{{ results.cleaned_text }}</pre>
             </div>
         </div>
     </div>

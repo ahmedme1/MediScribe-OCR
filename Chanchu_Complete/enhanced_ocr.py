@@ -239,7 +239,7 @@ def combine_ocr_results(results):
     if not results:
         return "", 0.0  # Return empty string and zero confidence
         
-    all_text = ""
+    all_lines = set()  # Use a set to store unique lines
     confidence_sum = 0
     confidence_count = 0
     
@@ -248,18 +248,25 @@ def combine_ocr_results(results):
         if result and len(result) > 0 and result[0] is not None:
             for line in result[0]:
                 if len(line) >= 2:  # Make sure the line has the expected structure
-                    text = line[1][0]  # text
-                    conf = line[1][1]  # confidence score
-                    all_text += text + "\n"
-                    confidence_sum += conf
-                    confidence_count += 1
+                    text = line[1][0].strip()  # text (stripped of whitespace)
+                    if text and len(text) > 1:  # Only include non-empty, meaningful lines
+                        all_lines.add(text)
+                        conf = line[1][1]  # confidence score
+                        confidence_sum += conf
+                        confidence_count += 1
     
     # Calculate average confidence
     avg_confidence = 0
     if confidence_count > 0:
         avg_confidence = confidence_sum / confidence_count
     
-    return all_text.strip(), avg_confidence
+    # Sort lines to maintain some logical order
+    sorted_lines = sorted(all_lines, key=lambda x: x.lower())
+    
+    # Join all unique lines
+    combined_text = "\n".join(sorted_lines)
+    
+    return combined_text.strip(), avg_confidence
 
 def extract_medical_entities(text):
     """Extract medical entities from the text"""

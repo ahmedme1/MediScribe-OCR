@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Chanchu - Medical Prescription OCR{% endblock %}
+{% block title %}MediScribe AI - Where Handwriting Meets Healthcare Intelligence{% endblock %}
 
 {% block custom_css %}
 .drop-container {
@@ -81,12 +81,42 @@
     width: 0;
     transition: width 0.3s ease;
 }
+
+#camera-container {
+    display: none;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+#camera-view {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.camera-controls {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.patient-info {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--gray-light);
+    padding-top: 1.5rem;
+}
+
+.prescription-details {
+    margin-top: 1.5rem;
+}
 {% endblock %}
 
 {% block content %}
 <div class="hero text-center p-4 my-4" data-aos="fade-up">
-    <h1>Medical Prescription OCR</h1>
-    <p class="lead mt-3">Upload a prescription image to extract medications and other information with high accuracy</p>
+    <h1>Where Handwriting Meets Healthcare Intelligence</h1>
+    <p class="lead mt-3">Upload a doctor's handwritten prescription and MediScribe AI will interpret it instantly</p>
 </div>
 
 <div class="row">
@@ -111,10 +141,40 @@
                         </div>
                     </div>
                     
-                    <div class="text-center">
+                    <div class="text-center mb-3">
+                        <button type="button" id="camera-btn" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-camera me-2"></i>Capture with Camera
+                        </button>
                         <button type="submit" class="btn btn-primary" id="submit-btn">
                             <i class="fas fa-search me-2"></i>Process Prescription
                         </button>
+                    </div>
+                    
+                    <div id="camera-container" class="mb-4">
+                        <video id="camera-view" autoplay></video>
+                        <div class="camera-controls">
+                            <button type="button" id="capture-btn" class="btn btn-primary">
+                                <i class="fas fa-camera me-2"></i>Take Photo
+                            </button>
+                            <button type="button" id="cancel-camera-btn" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </button>
+                        </div>
+                        <canvas id="canvas" style="display:none;"></canvas>
+                    </div>
+                    
+                    <div class="prescription-details">
+                        <h5 class="mb-3">Prescription Details</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="patient_name" class="form-label">Patient Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="patient_name" name="patient_name" placeholder="Enter patient name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="doctor_name" class="form-label">Doctor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="doctor_name" name="doctor_name" placeholder="Enter doctor name" required>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -130,7 +190,7 @@
             <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
                 <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
                 <h4>Training Mode</h4>
-                <p>Train the system with your prescriptions for 100% accuracy on future uploads</p>
+                <p>Train the system with your prescriptions for improved accuracy on future uploads</p>
             </div>
             
             <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
@@ -152,7 +212,13 @@
     const progressContainer = document.querySelector('.progress-container');
     const progressBar = document.getElementById('upload-progress');
     const submitBtn = document.getElementById('submit-btn');
-
+    const cameraBtn = document.getElementById('camera-btn');
+    const cameraContainer = document.getElementById('camera-container');
+    const cameraView = document.getElementById('camera-view');
+    const captureBtn = document.getElementById('capture-btn');
+    const cancelCameraBtn = document.getElementById('cancel-camera-btn');
+    const canvas = document.getElementById('canvas');
+    
     // Click on drop area to trigger file input
     dropArea.addEventListener('click', () => {
         fileInput.click();
@@ -249,18 +315,68 @@
         }, 100);
     }
     
-    // Form submission
-    document.getElementById('prescription-form').addEventListener('submit', function(e) {
-        if (!fileInput.files.length) {
-            e.preventDefault();
-            alert('Please select a prescription image');
-            return;
+    // Camera functionality
+    let stream = null;
+    
+    cameraBtn.addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            cameraView.srcObject = stream;
+            dropArea.style.display = 'none';
+            cameraContainer.style.display = 'block';
+        } catch (err) {
+            console.error('Error accessing camera: ', err);
+            alert('Could not access camera. Please make sure you have a camera connected and have granted permission.');
         }
-        
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-        
-        progressBar.style.width = '100%';
     });
+    
+    captureBtn.addEventListener('click', () => {
+        // Set canvas dimensions to match video
+        canvas.width = cameraView.videoWidth;
+        canvas.height = cameraView.videoHeight;
+        
+        // Draw the video frame to the canvas
+        canvas.getContext('2d').drawImage(cameraView, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas to blob
+        canvas.toBlob(blob => {
+            // Create a File object
+            const capturedImage = new File([blob], 'camera_capture.jpg', { type: 'image/jpeg' });
+            
+            // Create a FileList-like object
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(capturedImage);
+            fileInput.files = dataTransfer.files;
+            
+            // Stop camera stream
+            stopCamera();
+            
+            // Show preview and info
+            preview.src = URL.createObjectURL(blob);
+            preview.classList.remove('d-none');
+            fileInfo.textContent = `camera_capture.jpg (${formatFileSize(blob.size)})`;
+            fileInfo.classList.remove('d-none');
+            
+            // Show progress animation
+            progressContainer.style.display = 'block';
+            animateProgress();
+            
+            // Show drop area again
+            dropArea.style.display = 'block';
+        }, 'image/jpeg', 0.95);
+    });
+    
+    cancelCameraBtn.addEventListener('click', () => {
+        stopCamera();
+        dropArea.style.display = 'block';
+    });
+    
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        cameraContainer.style.display = 'none';
+    }
 </script>
 {% endblock %}
