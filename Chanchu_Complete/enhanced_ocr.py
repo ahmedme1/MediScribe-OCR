@@ -33,7 +33,7 @@ ocr_engine = PaddleOCR(
     det_limit_side_len=960,   # Limit size for detection to improve accuracy
     det_db_thresh=0.3,        # Lower threshold for detection to catch faint handwriting
     det_db_box_thresh=0.5,    # Adjusted box threshold
-    max_text_length=80,       # Longer text length for prescriptions
+    max_text_length=100,       # Longer text length for prescriptions
     drop_score=0.5,           # Minimum confidence score
     use_gpu=torch.cuda.is_available(),  # Use GPU if available
     show_log=False            # Don't show log for production
@@ -43,19 +43,52 @@ ocr_engine = PaddleOCR(
 MEDICATION_DICT = {
     # Common medications
     "amoxicillin": ["amox", "amoxil", "amoxicil", "amoxicilin"],
-    "paracetamol": ["paracet", "parcetamol", "acetaminophen", "tylenol"],
-    "ibuprofen": ["ibuprofin", "ibu", "ibuprofen", "advil", "motrin"],
-    "aspirin": ["asa", "acetylsalicylic", "aspr"],
-    "lisinopril": ["lisin", "prinivil", "zestril"],
-    "metformin": ["metform", "glucophage", "fortamet"],
-    "atorvastatin": ["lipitor", "atorva", "atorvastat"],
-    "levothyroxine": ["synthroid", "levothy", "levothyrox"],
-    "omeprazole": ["prilosec", "omepraz", "losec"],
-    "amlodipine": ["norvasc", "amlo", "amlod"],
-    "metoprolol": ["lopressor", "toprol", "metopro"],
-    "sertraline": ["zoloft", "sert", "sertra"],
-    "gabapentin": ["neurontin", "gaba", "gabap"],
-    "hydrochlorothiazide": ["hctz", "hydrochlor", "microzide"],
+    "paracetamol": ["paracet", "parcetamol", "acetaminophen", "tylenol", "crocin", "panadol"],
+    "ibuprofen": ["ibuprofin", "ibu", "ibuprofen", "advil", "motrin", "nurofen"],
+    "aspirin": ["asa", "acetylsalicylic", "aspr", "disprin", "ecotrin", "bayer"],
+    "lisinopril": ["lisin", "prinivil", "zestril", "qbrelis"],
+    "metformin": ["metform", "glucophage", "fortamet", "glumetza", "riomet"],
+    "atorvastatin": ["lipitor", "atorva", "atorvastat", "lipibec"],
+    "levothyroxine": ["synthroid", "levothy", "levothyrox", "levoxyl", "tirosint", "euthyrox"],
+    "omeprazole": ["prilosec", "omepraz", "losec", "zegerid", "priosec"],
+    "amlodipine": ["norvasc", "amlo", "amlod", "katerzia", "norvasc"],
+    "metoprolol": ["lopressor", "toprol", "metopro", "toprol-xl"],
+    "sertraline": ["zoloft", "sert", "sertra", "lustral"],
+    "gabapentin": ["neurontin", "gaba", "gabap", "gralise", "horizant"],
+    "hydrochlorothiazide": ["hctz", "hydrochlor", "microzide", "hydrodiuril"],
+    "simvastatin": ["zocor", "simvast", "simlup", "simcard"],
+    "losartan": ["cozaar", "losart", "lavestra"],
+    "albuterol": ["proventil", "ventolin", "proair", "salbutamol"],
+    "fluoxetine": ["prozac", "sarafem", "rapiflux"],
+    "citalopram": ["celexa", "cipramil", "citalo"],
+    "pantoprazole": ["protonix", "pantoloc", "pantocid"],
+    "furosemide": ["lasix", "furos", "frusemide", "frusol"],
+    "rosuvastatin": ["crestor", "rosuvast", "rosuvas"],
+    "escitalopram": ["lexapro", "cipralex", "nexito"],
+    "montelukast": ["singulair", "montek", "montair"],
+    "prednisone": ["deltasone", "predni", "orasone"],
+    "warfarin": ["coumadin", "jantoven", "warf"],
+    "tramadol": ["ultram", "tram", "tramahexal"],
+    "azithromycin": ["zithromax", "azithro", "z-pak", "azith"],
+    "ciprofloxacin": ["cipro", "ciloxan", "ciproxin"],
+    "lamotrigine": ["lamictal", "lamot", "lamotrigin"],
+    "venlafaxine": ["effexor", "venlaf", "venlor"],
+    "insulin": ["lantus", "humulin", "novolin", "humalog", "novolog", "tresiba"],
+    "metronidazole": ["flagyl", "metro", "metrogel"],
+    "naproxen": ["aleve", "naprosyn", "anaprox"],
+    "doxycycline": ["vibramycin", "oracea", "doxy"],
+    "cetirizine": ["zyrtec", "cetryn", "cetriz"],
+    "diazepam": ["valium", "valpam", "dizac"],
+    "alprazolam": ["xanax", "alprax", "tafil"],
+    "clonazepam": ["klonopin", "rivotril", "clon"],
+    "carvedilol": ["coreg", "carvedil", "cardivas"],
+    "fexofenadine": ["allegra", "telfast", "fexofine"],
+    "ranitidine": ["zantac", "ranit", "rantec"],
+    "diclofenac": ["voltaren", "diclof", "diclomax"],
+    "ceftriaxone": ["rocephin", "ceftri", "cefaxone"],
+    "cefixime": ["suprax", "cefi", "taxim"],
+    "esomeprazole": ["nexium", "esotrex", "esopral"],
+    "clopidogrel": ["plavix", "clopid", "plagerine"],
     
     # Common dosage units
     "milligram": ["mg", "mgs", "millig", "milligram"],
@@ -139,74 +172,46 @@ def apply_medical_dictionary_correction(text):
     
     return corrected_text
 
-def enhance_prescription_image(image_path):
-    """Apply specialized enhancements for prescription images"""
-    # Read the image
-    image = cv2.imread(image_path)
-    if image is None:
-        return None
+def preprocess_image(image_path):
+    """Simple and effective image preprocessing for prescription OCR."""
+    try:
+        # Read the image
+        image = cv2.imread(image_path)
+        if image is None:
+            return None
+            
+        # Simple preprocessing steps for handwritten prescriptions
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        denoised = cv2.fastNlMeansDenoising(gray)
+        thresh = cv2.adaptiveThreshold(
+            denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+            cv2.THRESH_BINARY, 11, 2
+        )
+        kernel = np.ones((1, 1), np.uint8)
+        processed = cv2.dilate(thresh, kernel, iterations=1)
         
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # 1. Adaptive histogram equalization for better contrast
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    enhanced = clahe.apply(gray)
-    
-    # 2. Bilateral filtering to preserve edges while removing noise
-    filtered = cv2.bilateralFilter(enhanced, 9, 75, 75)
-    
-    # 3. Unsharp masking to sharpen image
-    sharp = unsharp_mask(filtered, radius=1.5, amount=1.5)
-    sharp = (sharp * 255).astype(np.uint8)  # Convert from float to uint8
-    
-    # 4. Adaptively threshold the image
-    thresh = cv2.adaptiveThreshold(
-        sharp, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-        cv2.THRESH_BINARY_INV, 21, 10
-    )
-    
-    # 5. Morphological operations to enhance text
-    kernel = np.ones((1, 1), np.uint8)
-    dilated = cv2.dilate(thresh, kernel, iterations=1)
-    
-    # 6. Invert back (text should be black)
-    processed = cv2.bitwise_not(dilated)
-    
-    # Create filename for enhanced image
-    base_name = os.path.basename(image_path)
-    dir_name = os.path.dirname(image_path)
-    enhanced_name = f"enhanced_{base_name}"
-    enhanced_path = os.path.join(dir_name, enhanced_name)
-    
-    # Save enhanced image
-    cv2.imwrite(enhanced_path, processed)
-    
-    return {
-        "original": image_path,
-        "enhanced": enhanced_path,
-        "processed_image": processed
-    }
+        # Create filename for enhanced image
+        base_name = os.path.basename(image_path)
+        dir_name = os.path.dirname(image_path)
+        enhanced_name = f"enhanced_{base_name}"
+        enhanced_path = os.path.join(dir_name, enhanced_name)
+        
+        # Save enhanced image
+        cv2.imwrite(enhanced_path, processed)
+        
+        return {
+            "original": image_path,
+            "enhanced": enhanced_path,
+            "processed_image": processed
+        }
+    except Exception as e:
+        print(f"Error in image preprocessing: {str(e)}")
+        return None
 
 def run_multiple_ocr_passes(image_data):
     """Apply multiple OCR passes with different preprocessing methods"""
     results = []
     paths_to_process = [image_data["original"], image_data["enhanced"]]
-    
-    # Additional preprocessing for problematic images
-    img = image_data["processed_image"]
-    
-    # Create a more contrasty version
-    high_contrast = exposure.rescale_intensity(img, in_range=(100, 200))
-    high_contrast_path = os.path.join(os.path.dirname(image_data["original"]), "high_contrast.jpg")
-    cv2.imwrite(high_contrast_path, high_contrast)
-    paths_to_process.append(high_contrast_path)
-    
-    # Create a version with more aggressive denoising
-    denoised = cv2.fastNlMeansDenoising(img, None, 13, 7, 21)
-    denoised_path = os.path.join(os.path.dirname(image_data["original"]), "denoised.jpg")
-    cv2.imwrite(denoised_path, denoised)
-    paths_to_process.append(denoised_path)
     
     # Try with different processing on each image
     for img_path in paths_to_process:
@@ -222,15 +227,6 @@ def run_multiple_ocr_passes(image_data):
                 results.append({"result": result_rotated, "source": img_path + "_rotated"})
         except Exception as e:
             print(f"OCR error on {img_path}: {str(e)}")
-    
-    # Clean up temporary files
-    try:
-        if os.path.exists(high_contrast_path):
-            os.remove(high_contrast_path)
-        if os.path.exists(denoised_path):
-            os.remove(denoised_path)
-    except:
-        pass
         
     return results
 
@@ -239,7 +235,7 @@ def combine_ocr_results(results):
     if not results:
         return "", 0.0  # Return empty string and zero confidence
         
-    all_lines = set()  # Use a set to store unique lines
+    all_text = ""
     confidence_sum = 0
     confidence_count = 0
     
@@ -248,25 +244,18 @@ def combine_ocr_results(results):
         if result and len(result) > 0 and result[0] is not None:
             for line in result[0]:
                 if len(line) >= 2:  # Make sure the line has the expected structure
-                    text = line[1][0].strip()  # text (stripped of whitespace)
-                    if text and len(text) > 1:  # Only include non-empty, meaningful lines
-                        all_lines.add(text)
-                        conf = line[1][1]  # confidence score
-                        confidence_sum += conf
-                        confidence_count += 1
+                    text = line[1][0]  # text
+                    conf = line[1][1]  # confidence score
+                    all_text += text + "\n"
+                    confidence_sum += conf
+                    confidence_count += 1
     
     # Calculate average confidence
     avg_confidence = 0
     if confidence_count > 0:
         avg_confidence = confidence_sum / confidence_count
     
-    # Sort lines to maintain some logical order
-    sorted_lines = sorted(all_lines, key=lambda x: x.lower())
-    
-    # Join all unique lines
-    combined_text = "\n".join(sorted_lines)
-    
-    return combined_text.strip(), avg_confidence
+    return all_text.strip(), avg_confidence
 
 def extract_medical_entities(text):
     """Extract medical entities from the text"""
@@ -280,9 +269,38 @@ def extract_medical_entities(text):
         doc = nlp(text)
         for ent in doc.ents:
             if ent.label_ in ["CHEMICAL", "DRUG", "MEDICATION"]:
-                medications.append(ent.text)
+                # Extract only the medication name without dosage or frequency
+                med_name = re.sub(r'\s+\d+\s*\w*\b', '', ent.text) # Remove numbers and units
+                med_name = re.sub(r'\b(once|twice|three|four)(\s+times)?\s+(daily|a\s+day)\b', '', med_name, flags=re.IGNORECASE)
+                med_name = re.sub(r'\b(every|each)\s+(morning|evening|night|day|hour|hourly)\b', '', med_name, flags=re.IGNORECASE)
+                med_name = re.sub(r'\b(qd|bid|tid|qid|prn|od|q\d+h)\b', '', med_name, flags=re.IGNORECASE)
+                med_name = med_name.strip()
+                if med_name and len(med_name) > 2:  # Ensure we have a reasonable name (not just a unit or directive)
+                    medications.append(med_name)
     
-    # Use pattern matching for common medication formats
+    # Extract medications using our dictionary
+    for key in MEDICATION_DICT.keys():
+        # Skip dosage units, frequency terms, routes, and instructions
+        if key in ["milligram", "microgram", "gram", "milliliter", 
+                   "once daily", "twice daily", "three times daily", "four times daily",
+                   "every morning", "every night", "every hour", "every 4 hours",
+                   "every 6 hours", "every 8 hours", "every 12 hours", "as needed",
+                   "by mouth", "intravenous", "intramuscular", "subcutaneous",
+                   "sublingual", "topical", "inhalation",
+                   "with food", "before meals", "after meals", "with water",
+                   "do not crush", "take with plenty of water", "dissolve in water",
+                   "until finished", "shake well"]:
+            continue
+            
+        if re.search(r'\b' + re.escape(key) + r'\b', text, re.IGNORECASE):
+            medications.append(key)
+        else:
+            # Check aliases, but only for medication items
+            for alias in MEDICATION_DICT[key]:
+                if re.search(r'\b' + re.escape(alias) + r'\b', text, re.IGNORECASE):
+                    medications.append(key)  # Add the standardized term
+                    break
+    
     # Pattern for dosage (number + unit)
     dosage_pattern = r'\b(\d+[\.\d]*)\s*(mg|mcg|mL|g|mg/mL|mEq|units|tablets?|caps?)\b'
     dosage_matches = re.finditer(dosage_pattern, text, re.IGNORECASE)
@@ -319,20 +337,20 @@ def extract_medical_entities(text):
         for match in matches:
             routes.append(match.group(0))
     
-    # Extract medications using our dictionary if spaCy didn't find any
-    if not medications:
-        for key in MEDICATION_DICT.keys():
-            if re.search(r'\b' + re.escape(key) + r'\b', text, re.IGNORECASE):
-                medications.append(key)
-            else:
-                # Check aliases
-                for alias in MEDICATION_DICT[key]:
-                    if re.search(r'\b' + re.escape(alias) + r'\b', text, re.IGNORECASE):
-                        medications.append(key)  # Add the standardized term
-                        break
+    # Clean medication names to remove any residual dosage or frequency info
+    clean_medications = []
+    for med in medications:
+        # Remove dosage and frequency information
+        clean_med = re.sub(r'\s+\d+\s*\w*\b', '', med).strip()
+        clean_med = re.sub(r'\b(once|twice|three|four)(\s+times)?\s+(daily|a\s+day)\b', '', clean_med, flags=re.IGNORECASE).strip()
+        clean_med = re.sub(r'\b(every|each)\s+(morning|evening|night|day|hour|hourly)\b', '', clean_med, flags=re.IGNORECASE).strip()
+        clean_med = re.sub(r'\b(qd|bid|tid|qid|prn|od|q\d+h)\b', '', clean_med, flags=re.IGNORECASE).strip()
+        
+        if clean_med and len(clean_med) > 2:  # Ensure we have a meaningful name
+            clean_medications.append(clean_med)
     
     return {
-        "medications": list(set(medications)),
+        "medications": list(set(clean_medications)),
         "dosages": list(set(dosages)),
         "frequencies": list(set(frequencies)),
         "routes": list(set(routes))
@@ -352,10 +370,10 @@ def process_prescription_with_enhanced_ocr(image_path, output_dir=None):
             enhanced_path = None
             results_path = None
         
-        # STEP 1: Apply specialized image enhancement
-        image_data = enhance_prescription_image(image_path)
+        # STEP 1: Apply simple image preprocessing
+        image_data = preprocess_image(image_path)
         if not image_data:
-            return {"error": "Failed to enhance image"}
+            return {"error": "Failed to preprocess image"}
         
         # STEP 2: Run multiple OCR passes with different preprocessing
         ocr_results = run_multiple_ocr_passes(image_data)
@@ -395,7 +413,7 @@ def process_prescription_with_enhanced_ocr(image_path, output_dir=None):
         return results
         
     except Exception as e:
-        print(f"Error in enhanced OCR processing: {str(e)}")
+        print(f"Error in OCR processing: {str(e)}")
         return {"error": f"Processing error: {str(e)}"}
 
 # If running as a script

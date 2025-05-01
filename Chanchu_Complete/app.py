@@ -405,5 +405,43 @@ def export_all_csv():
     
     return response
 
+@app.route('/delete-record/<result_file>', methods=['POST'])
+def delete_record(result_file):
+    filepath = os.path.join(app.config['RESULTS_FOLDER'], result_file)
+    
+    # Check if the file exists
+    if not os.path.exists(filepath):
+        return jsonify({'success': False, 'error': 'Record not found'}), 404
+    
+    try:
+        # Load the result data to get the image path
+        with open(filepath, 'r') as f:
+            result_data = json.load(f)
+        
+        # Try to delete the original image file if it exists
+        if 'image_path' in result_data:
+            image_path = result_data['image_path']
+            if os.path.exists(image_path):
+                try:
+                    os.remove(image_path)
+                except:
+                    pass
+        
+        # Delete preprocessed image if it exists
+        if 'preprocessed_image' in result_data and result_data['preprocessed_image']:
+            preprocessed_image = result_data['preprocessed_image']
+            if os.path.exists(preprocessed_image):
+                try:
+                    os.remove(preprocessed_image)
+                except:
+                    pass
+        
+        # Delete the results file
+        os.remove(filepath)
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
