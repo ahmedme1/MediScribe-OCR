@@ -4,23 +4,23 @@
 
 {% block custom_css %}
 .drop-container {
-    border: 2px dashed var(--primary);
+    border: 2px dashed #00DBDE;
     border-radius: 12px;
     padding: 2rem;
     text-align: center;
-    background-color: rgba(59, 130, 246, 0.05);
+    background-color: rgba(0, 219, 222, 0.05);
     transition: all 0.3s;
     position: relative;
 }
 
 .drop-container:hover {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: var(--primary-dark);
+    background-color: rgba(0, 219, 222, 0.1);
+    border-color: #FC00FF;
 }
 
 .upload-icon {
     font-size: 3rem;
-    color: var(--primary);
+    color: #00DBDE;
     margin-bottom: 1rem;
 }
 
@@ -39,15 +39,15 @@
 }
 
 .training-note {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-left: 4px solid var(--warning);
+    background-color: rgba(252, 0, 255, 0.05);
+    border-left: 4px solid #FC00FF;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-radius: 8px;
 }
 
 .training-note h5 {
-    color: var(--warning);
+    color: #00DBDE;
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
@@ -55,6 +55,8 @@
 
 .training-note h5 i {
     margin-right: 0.5rem;
+    color: #FC00FF;
+    -webkit-text-fill-color: currentColor;
 }
 
 .training-note ul {
@@ -88,10 +90,10 @@
 
 .benefit-icon {
     font-size: 2.5rem;
-    color: var(--primary);
+    color: #00DBDE;
     margin-bottom: 1rem;
     display: inline-block;
-    background-color: rgba(59, 130, 246, 0.1);
+    background-color: rgba(0, 219, 222, 0.05);
     padding: 1rem;
     border-radius: 50%;
 }
@@ -105,7 +107,7 @@
 .progress-bar {
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(to right, var(--primary), var(--secondary));
+    background: linear-gradient(to right, #00DBDE, #FC00FF);
     width: 0;
     transition: width 0.3s ease;
 }
@@ -113,88 +115,120 @@
 .form-floating > textarea.form-control {
     height: 120px;
 }
+
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    background-color: white;
+}
+
+.card-header {
+    background-color: white;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary {
+    background-color: #00DBDE;
+    border-color: #00DBDE;
+}
+
+.btn-primary:hover {
+    background-color: #00B5B8;
+    border-color: #00B5B8;
+}
+
+.badge.bg-warning {
+    background-color: #FC00FF !important;
+    color: white;
+}
 {% endblock %}
 
 {% block content %}
-<div class="hero text-center p-4 my-4" data-aos="fade-up">
-    <h1>System Training</h1>
-    <p class="lead mt-2">Train the OCR system to recognize specific prescription images with 100% accuracy</p>
-</div>
+<div class="content-wrapper">
+    <div class="text-center p-4 mb-4">
+        <h1 class="mb-2">System Training</h1>
+        <p class="lead">Train the OCR system to recognize specific prescription images with 100% accuracy</p>
+    </div>
 
-<div class="row">
-    <div class="col-lg-10 mx-auto">
-        <div class="training-note" data-aos="fade-up" data-aos-delay="200">
-            <h5><i class="fas fa-lightbulb"></i> How Training Works</h5>
-            <p>Training allows the system to learn from specific image-text pairs and produce exact outputs when those images are uploaded again.</p>
-            <ul>
-                <li>Upload a prescription image</li>
-                <li>Enter the correct text that should be recognized from this image</li>
-                <li>The system will remember this image and always return the text you provided</li>
-            </ul>
-            <p class="mb-0"><strong>Note:</strong> Once you train an image, the system will always recognize that exact image with 100% accuracy.</p>
-        </div>
-        
-        <div class="card mb-4" data-aos="fade-up" data-aos-delay="300">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Train with New Prescription</span>
-                <span class="badge bg-warning">Training Mode</span>
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="training-note" data-aos="fade-up" data-aos-delay="200">
+                <h5><i class="fas fa-lightbulb"></i> How Training Works</h5>
+                <p>Training allows the system to learn from specific image-text pairs and produce exact outputs when those images are uploaded again.</p>
+                <ul>
+                    <li>Upload a prescription image</li>
+                    <li>Enter the correct text that should be recognized from this image</li>
+                    <li>The system will remember this image and always return the text you provided</li>
+                </ul>
+                <p class="mb-0"><strong>Note:</strong> Once you train an image, the system will always recognize that exact image with 100% accuracy.</p>
             </div>
-            <div class="card-body">
-                <form id="training-form" action="/train" method="post" enctype="multipart/form-data">
-                    <div id="drop-area" class="drop-container mb-4">
-                        <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
-                        <h4>Drag & Drop Prescription Image</h4>
-                        <p>or click to browse files</p>
-                        <input type="file" id="image" name="image" class="d-none" accept=".jpg,.jpeg,.png,.tif,.tiff">
-                        <img id="preview" class="d-none">
-                        <p class="file-info mt-2 d-none" id="file-info"></p>
+            
+            <div class="card mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Train with New Prescription</span>
+                    <span class="badge bg-warning">Training Mode</span>
+                </div>
+                <div class="card-body">
+                    <form id="training-form" action="/train" method="post" enctype="multipart/form-data">
+                        <div id="drop-area" class="drop-container mb-4">
+                            <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
+                            <h4>Drag & Drop Prescription Image</h4>
+                            <p>or click to browse files</p>
+                            <input type="file" id="image" name="image" class="d-none" accept=".jpg,.jpeg,.png,.tif,.tiff">
+                            <img id="preview" class="d-none">
+                            <p class="file-info mt-2 d-none" id="file-info"></p>
+                            
+                            <div class="progress-container">
+                                <div class="progress-bar" id="upload-progress"></div>
+                            </div>
+                        </div>
                         
-                        <div class="progress-container">
-                            <div class="progress-bar" id="upload-progress"></div>
+                        <div class="form-floating mb-4">
+                            <textarea class="form-control" id="text" name="text" placeholder="Enter the correct text for this prescription"></textarea>
+                            <label for="text">Correct Text Recognition (Optional)</label>
+                            <div class="form-text">If left empty, the system will use its own OCR results but will still remember this image.</div>
                         </div>
-                    </div>
-                    
-                    <div class="form-floating mb-4">
-                        <textarea class="form-control" id="text" name="text" placeholder="Enter the correct text for this prescription"></textarea>
-                        <label for="text">Correct Text Recognition (Optional)</label>
-                        <div class="form-text">If left empty, the system will use its own OCR results but will still remember this image.</div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary" id="submit-btn">
-                            <i class="fas fa-graduation-cap me-2"></i>Train System with This Image
-                        </button>
-                    </div>
-                </form>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                <i class="fas fa-graduation-cap me-2"></i>Train System with This Image
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-        
-        <div class="card mt-4" data-aos="fade-up" data-aos-delay="400">
-            <div class="card-header">Training Benefits</div>
-            <div class="card-body">
-                <div class="benefits-grid">
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <i class="fas fa-check-circle"></i>
+            
+            <div class="card mt-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="card-header">Training Benefits</div>
+                <div class="card-body">
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h5>100% Accuracy</h5>
+                            <p>Trained images are recognized with perfect accuracy every time they are uploaded again.</p>
                         </div>
-                        <h5>100% Accuracy</h5>
-                        <p>Trained images are recognized with perfect accuracy every time they are uploaded again.</p>
-                    </div>
-                    
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <i class="fas fa-bolt"></i>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h5>Faster Processing</h5>
+                            <p>Trained images are processed instantly without the need for complex OCR analysis.</p>
                         </div>
-                        <h5>Faster Processing</h5>
-                        <p>Trained images are processed instantly without the need for complex OCR analysis.</p>
-                    </div>
-                    
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <i class="fas fa-sync"></i>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <i class="fas fa-sync"></i>
+                            </div>
+                            <h5>Consistency</h5>
+                            <p>Get the same accurate results every time you process the same prescription.</p>
                         </div>
-                        <h5>Consistency</h5>
-                        <p>Get the same accurate results every time you process the same prescription.</p>
                     </div>
                 </div>
             </div>
@@ -241,13 +275,13 @@
     });
 
     function highlight() {
-        dropArea.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
-        dropArea.style.borderColor = 'var(--primary-dark)';
+        dropArea.style.backgroundColor = 'rgba(0, 219, 222, 0.15)';
+        dropArea.style.borderColor = '#FC00FF';
     }
 
     function unhighlight() {
-        dropArea.style.backgroundColor = 'rgba(59, 130, 246, 0.05)';
-        dropArea.style.borderColor = 'var(--primary)';
+        dropArea.style.backgroundColor = 'rgba(0, 219, 222, 0.05)';
+        dropArea.style.borderColor = '#00DBDE';
     }
 
     // Handle dropped files

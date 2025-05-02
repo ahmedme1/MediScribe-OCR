@@ -17,26 +17,36 @@
     
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #1d4ed8;
-            --secondary: #14b8a6;
-            --dark: #0f172a;
-            --light: #f8fafc;
+            --primary: #00DBDE;
+            --primary-dark: #00B5B8;
+            --secondary: #FC00FF;
+            --secondary-dark: #C000C4;
+            --dark: #333333;
+            --light: #ffffff;
             --gray: #64748b;
             --gray-light: #e2e8f0;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #3b82f6;
+            --info: #00DBDE;
         }
         
+        /* Gradient background animation */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: var(--light);
             color: var(--dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background: linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%);
+            background-size: 200% 200%;
+            animation: gradientAnimation 5s ease infinite;
+        }
+        
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         h1, h2, h3, h4, h5, h6 {
@@ -50,33 +60,34 @@
         }
         
         .navbar {
-            background-color: var(--dark);
+            background-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             padding: 1rem 0;
+            backdrop-filter: blur(10px);
         }
         
         .navbar-brand {
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
-            color: white !important;
+            color: var(--dark) !important;
         }
         
         .brand-highlight {
-            color: var(--primary);
+            color: #00DBDE;
             font-weight: 700;
         }
         
         .nav-link {
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.8) !important;
+            color: var(--dark) !important;
             position: relative;
             transition: all 0.3s;
             margin: 0 0.5rem;
         }
         
         .nav-link:hover {
-            color: white !important;
+            color: var(--secondary) !important;
         }
         
         .nav-link::after {
@@ -84,7 +95,7 @@
             position: absolute;
             width: 0;
             height: 2px;
-            background-color: var(--primary);
+            background: linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%);
             bottom: -2px;
             left: 0;
             transition: width 0.3s;
@@ -96,30 +107,19 @@
         }
         
         .nav-link.active {
-            color: white !important;
+            color: var(--secondary) !important;
             font-weight: 600;
         }
         
         .hero {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
-            color: white;
+            background-color: rgba(255, 255, 255, 0.85);
+            color: var(--dark);
             border-radius: 10px;
             padding: 2.5rem 2rem;
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            z-index: 0;
+            backdrop-filter: blur(10px);
         }
         
         .card {
@@ -128,6 +128,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
+            background-color: white;
         }
         
         .card:hover {
@@ -136,8 +137,8 @@
         }
         
         .card-header {
-            background-color: var(--primary);
-            color: white;
+            background-color: #f8f9fa;
+            color: var(--dark);
             font-weight: 600;
             padding: 1rem 1.5rem;
             border-bottom: none;
@@ -153,11 +154,25 @@
         .btn-primary {
             background-color: var(--primary);
             border-color: var(--primary);
+            color: white;
         }
         
         .btn-primary:hover {
             background-color: var(--primary-dark);
             border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+            border-color: var(--secondary-dark);
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -174,11 +189,24 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
+        .btn-outline-secondary {
+            color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
         footer {
             margin-top: auto;
             padding: 2rem 0;
-            background-color: var(--dark);
-            color: white;
+            background-color: rgba(255, 255, 255, 0.85);
+            color: var(--dark);
+            backdrop-filter: blur(10px);
         }
         
         .footer-content {
@@ -193,6 +221,7 @@
             font-weight: 700;
             font-size: 1.5rem;
             margin-bottom: 1rem;
+            color: #00DBDE;
         }
         
         .social-links {
@@ -208,13 +237,14 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark);
             transition: all 0.3s;
         }
         
         .social-links a:hover {
-            background-color: var(--primary);
+            background: linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%);
+            color: white;
             transform: translateY(-3px);
         }
         
@@ -251,49 +281,55 @@
         }
         
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Content wrapper for background content */
+        .content-wrapper {
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
         }
         
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Loading animation */
+        /* Loading overlay styling */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.9);
+            background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.5s;
+            transition: opacity 0.3s, visibility 0.3s;
         }
         
         .loading-overlay.hidden {
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden;
         }
         
         .loader {
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
             border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: var(--primary);
-            animation: rotate 1s ease-in-out infinite;
+            animation: spin 1s ease-in-out infinite;
         }
-    </style>
-    
-    <style type="text/css">
-        /* Custom styles for specific pages */
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         {% block custom_css %}{% endblock %}
     </style>
     
@@ -306,40 +342,36 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/">MediScribe AI<span class="brand-highlight">OCR</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-file-medical-alt me-2"></i>
+                Medi<span class="brand-highlight">Scribe AI</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
-                            <i class="fas fa-home me-1"></i> Home
-                        </a>
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/training' %}active{% endif %}" href="/training">
-                            <i class="fas fa-graduation-cap me-1"></i> Training
-                        </a>
+                        <a class="nav-link {% if request.path == '/history' %}active{% endif %}" href="/history">History</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/history' %}active{% endif %}" href="/history">
-                            <i class="fas fa-history me-1"></i> History
-                        </a>
+                        <a class="nav-link {% if request.path == '/training' %}active{% endif %}" href="/training">Training</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/about' %}active{% endif %}" href="/about">
-                            <i class="fas fa-info-circle me-1"></i> About
-                        </a>
+                        <a class="nav-link {% if request.path == '/about' %}active{% endif %}" href="/about">About</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <main class="container my-4">
         {% block content %}{% endblock %}
     </main>
@@ -348,16 +380,17 @@
     <footer>
         <div class="container">
             <div class="footer-content">
-                <div class="footer-logo">MediScribe AI<span class="brand-highlight">OCR</span></div>
-                <p class="mb-3">Advanced Medical Prescription OCR System</p>
-                
-                <div class="social-links">
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <div class="footer-logo">
+                    <i class="fas fa-file-medical-alt me-2"></i>
+                    MediScribe AI
                 </div>
-                
-                <p class="copyright mt-3 mb-0">&copy; 2025 MediScribe AI - Medical Prescription OCR | College Project</p>
+                <p class="mb-3 text-center">Advanced Medical Prescription OCR</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+                <p class="mb-0 text-center">&copy; 2023 MediScribe AI Project. All rights reserved.</p>
             </div>
         </div>
     </footer>
