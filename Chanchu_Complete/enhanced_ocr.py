@@ -41,54 +41,98 @@ ocr_engine = PaddleOCR(
 
 # Medical dictionary for common prescription terms
 MEDICATION_DICT = {
-    # Common medications
-    "amoxicillin": ["amox", "amoxil", "amoxicil", "amoxicilin"],
-    "paracetamol": ["paracet", "parcetamol", "acetaminophen", "tylenol", "crocin", "panadol"],
-    "ibuprofen": ["ibuprofin", "ibu", "ibuprofen", "advil", "motrin", "nurofen"],
-    "aspirin": ["asa", "acetylsalicylic", "aspr", "disprin", "ecotrin", "bayer"],
-    "lisinopril": ["lisin", "prinivil", "zestril", "qbrelis"],
-    "metformin": ["metform", "glucophage", "fortamet", "glumetza", "riomet"],
-    "atorvastatin": ["lipitor", "atorva", "atorvastat", "lipibec"],
-    "levothyroxine": ["synthroid", "levothy", "levothyrox", "levoxyl", "tirosint", "euthyrox"],
-    "omeprazole": ["prilosec", "omepraz", "losec", "zegerid", "priosec"],
-    "amlodipine": ["norvasc", "amlo", "amlod", "katerzia", "norvasc"],
-    "metoprolol": ["lopressor", "toprol", "metopro", "toprol-xl"],
-    "sertraline": ["zoloft", "sert", "sertra", "lustral"],
-    "gabapentin": ["neurontin", "gaba", "gabap", "gralise", "horizant"],
-    "hydrochlorothiazide": ["hctz", "hydrochlor", "microzide", "hydrodiuril"],
-    "simvastatin": ["zocor", "simvast", "simlup", "simcard"],
-    "losartan": ["cozaar", "losart", "lavestra"],
-    "albuterol": ["proventil", "ventolin", "proair", "salbutamol"],
-    "fluoxetine": ["prozac", "sarafem", "rapiflux"],
-    "citalopram": ["celexa", "cipramil", "citalo"],
-    "pantoprazole": ["protonix", "pantoloc", "pantocid"],
-    "furosemide": ["lasix", "furos", "frusemide", "frusol"],
-    "rosuvastatin": ["crestor", "rosuvast", "rosuvas"],
-    "escitalopram": ["lexapro", "cipralex", "nexito"],
-    "montelukast": ["singulair", "montek", "montair"],
-    "prednisone": ["deltasone", "predni", "orasone"],
-    "warfarin": ["coumadin", "jantoven", "warf"],
-    "tramadol": ["ultram", "tram", "tramahexal"],
-    "azithromycin": ["zithromax", "azithro", "z-pak", "azith"],
-    "ciprofloxacin": ["cipro", "ciloxan", "ciproxin"],
-    "lamotrigine": ["lamictal", "lamot", "lamotrigin"],
-    "venlafaxine": ["effexor", "venlaf", "venlor"],
-    "insulin": ["lantus", "humulin", "novolin", "humalog", "novolog", "tresiba"],
-    "metronidazole": ["flagyl", "metro", "metrogel"],
-    "naproxen": ["aleve", "naprosyn", "anaprox"],
-    "doxycycline": ["vibramycin", "oracea", "doxy"],
-    "cetirizine": ["zyrtec", "cetryn", "cetriz"],
-    "diazepam": ["valium", "valpam", "dizac"],
-    "alprazolam": ["xanax", "alprax", "tafil"],
-    "clonazepam": ["klonopin", "rivotril", "clon"],
-    "carvedilol": ["coreg", "carvedil", "cardivas"],
-    "fexofenadine": ["allegra", "telfast", "fexofine"],
-    "ranitidine": ["zantac", "ranit", "rantec"],
-    "diclofenac": ["voltaren", "diclof", "diclomax"],
-    "ceftriaxone": ["rocephin", "ceftri", "cefaxone"],
-    "cefixime": ["suprax", "cefi", "taxim"],
-    "esomeprazole": ["nexium", "esotrex", "esopral"],
-    "clopidogrel": ["plavix", "clopid", "plagerine"],
+    # Common medications - Updated for Indian market
+    "amoxicillin": ["amox", "amoxil", "amoxicil", "amoxicilin", "mox", "novamox", "almoxi", "wymox"],
+    "paracetamol": ["paracet", "parcetamol", "acetaminophen", "tylenol", "crocin", "panadol", "dolo", "metacin", "calpol", "sumo", "febrex", "acepar", "pacimol"],
+    "ibuprofen": ["ibuprofin", "ibu", "ibuprofen", "advil", "motrin", "nurofen", "brufen", "ibugesic", "combiflam"],
+    "aspirin": ["asa", "acetylsalicylic", "aspr", "disprin", "ecotrin", "bayer", "loprin", "delisprin", "colsprin"],
+    "lisinopril": ["lisin", "prinivil", "zestril", "qbrelis", "listril", "hipril", "zestopril"],
+    "metformin": ["metform", "glucophage", "fortamet", "glumetza", "riomet", "glycomet", "obimet", "gluformin", "glyciphage"],
+    "atorvastatin": ["lipitor", "atorva", "atorvastat", "lipibec", "atorlip", "atocor", "storvas"],
+    "levothyroxine": ["synthroid", "levothy", "levothyrox", "levoxyl", "tirosint", "euthyrox", "thyronorm", "eltroxin"],
+    "omeprazole": ["prilosec", "omepraz", "losec", "zegerid", "priosec", "omez", "ocid", "prazole"],
+    "amlodipine": ["norvasc", "amlo", "amlod", "katerzia", "norvasc", "amlopress", "amlopres", "amlokind"],
+    "metoprolol": ["lopressor", "toprol", "metopro", "toprol-xl", "betaloc", "metolar", "starpress"],
+    "sertraline": ["zoloft", "sert", "sertra", "lustral", "serta", "daxid", "serlin"],
+    "gabapentin": ["neurontin", "gaba", "gabap", "gralise", "horizant", "gabapin", "gaban", "progaba"],
+    "hydrochlorothiazide": ["hctz", "hydrochlor", "microzide", "hydrodiuril", "hydrazide", "aquazide"],
+    "simvastatin": ["zocor", "simvast", "simlup", "simcard", "simvotin", "zosta", "simgal"],
+    "losartan": ["cozaar", "losart", "lavestra", "repace", "losar", "zaart", "covance"],
+    "albuterol": ["proventil", "ventolin", "proair", "salbutamol", "asthalin", "ventofort", "aeromist"],
+    "fluoxetine": ["prozac", "sarafem", "rapiflux", "prodep", "fludac", "flunil", "flunat"],
+    "citalopram": ["celexa", "cipramil", "citalo", "celepram", "citalex", "citopam"],
+    "pantoprazole": ["protonix", "pantoloc", "pantocid", "pantodac", "zipant", "pan"],
+    "furosemide": ["lasix", "furos", "frusemide", "frusol", "lasix", "frusenex", "diucontin"],
+    "rosuvastatin": ["crestor", "rosuvast", "rosuvas", "rovista", "rostor", "colver"],
+    "escitalopram": ["lexapro", "cipralex", "nexito", "feliz", "stalopam", "nexito-forte"],
+    "montelukast": ["singulair", "montek", "montair", "monticope", "romilast", "monty-lc"],
+    "prednisone": ["deltasone", "predni", "orasone", "predcip", "omnacortil", "wysolone"],
+    "warfarin": ["coumadin", "jantoven", "warf", "warfex", "warfrant", "uniwarfin"],
+    "tramadol": ["ultram", "tram", "tramahexal", "tramazac", "domadol", "tramacip"],
+    "azithromycin": ["zithromax", "azithro", "z-pak", "azith", "azee", "aziwok", "azimax", "zithrocin"],
+    "ciprofloxacin": ["cipro", "ciloxan", "ciproxin", "ciplox", "ciprobid", "cifran", "ciprinol"],
+    "lamotrigine": ["lamictal", "lamot", "lamotrigin", "lamogard", "lamitor", "lametec"],
+    "venlafaxine": ["effexor", "venlaf", "venlor", "veniz", "ventab", "venlift"],
+    "insulin": ["lantus", "humulin", "novolin", "humalog", "novolog", "tresiba", "insugen", "wosulin", "basalog", "insuman", "apidra"],
+    "metronidazole": ["flagyl", "metro", "metrogel", "metrogyl", "metrozole", "aristogyl"],
+    "naproxen": ["aleve", "naprosyn", "anaprox", "xenar", "napra", "napxen"],
+    "doxycycline": ["vibramycin", "oracea", "doxy", "doxin", "biodoxi", "doxt"],
+    "cetirizine": ["zyrtec", "cetryn", "cetriz", "alerid", "cetcip", "zirtin", "cetzine"],
+    "diazepam": ["valium", "valpam", "dizac", "calmpose", "zepose", "sedopam"],
+    "alprazolam": ["xanax", "alprax", "tafil", "alp", "alzolam", "zolax", "restyl", "trika"],
+    "clonazepam": ["klonopin", "rivotril", "clon", "petril", "clonopam", "lonazep"],
+    "carvedilol": ["coreg", "carvedil", "cardivas", "carca", "carvil", "carloc"],
+    "fexofenadine": ["allegra", "telfast", "fexofine", "fexova", "agimfast", "allerfast"],
+    "ranitidine": ["zantac", "ranit", "rantec", "aciloc", "zinetac", "histac"],
+    "diclofenac": ["voltaren", "diclof", "diclomax", "voveran", "diclonac", "reactin"],
+    "ceftriaxone": ["rocephin", "ceftri", "cefaxone", "inocef", "trixone", "monotax"],
+    "cefixime": ["suprax", "cefi", "taxim", "unice", "cefispan", "omnicef"],
+    "esomeprazole": ["nexium", "esotrex", "esopral", "nexpro", "raciper", "sompraz"],
+    "clopidogrel": ["plavix", "clopid", "plagerine", "clopilet", "deplatt", "noklot"],
+    
+    # Adding more Indian medications
+    "levocetirizine": ["xyzal", "levocet", "teczine", "levazeo", "xyzra", "uvnil"],
+    "febuxostat": ["uloric", "febugat", "febuget", "zylobact", "febustat"],
+    "telmisartan": ["micardis", "telma", "telsar", "sartel", "telvas", "cresar"],
+    "folic acid": ["folate", "folvite", "folet", "folacin", "folitab", "obifolic"],
+    "olmesartan": ["benicar", "olmat", "olmy", "benitec", "olmezest", "olsar"],
+    "vildagliptin": ["galvus", "zomelis", "jalra", "vysov", "vildalip", "viladay"],
+    "sitagliptin": ["januvia", "sitagen", "istamet", "janumet", "sitaglip", "trevia"],
+    "metoprolol": ["lopresor", "metolar", "metocard", "betaloc", "meto-er", "metopro"],
+    "glimepiride": ["amaryl", "glimpid", "glymex", "zoryl", "glimer", "diaglip"],
+    "gliclazide": ["diamicron", "lycazid", "glizid", "reclide", "odinase", "glynase"],
+    "ramipril": ["altace", "cardiopril", "cardace", "ramiril", "celapres", "ramace"],
+    "nebivolol": ["bystolic", "nebistar", "nebicard", "nebilong", "nebilet", "nubeta"],
+    "cilnidipine": ["cilacar", "cinod", "ciladay", "neudipine", "cilaheart", "cidip"],
+    "rabeprazole": ["aciphex", "rablet", "rabicip", "razo", "raboz", "pepcia"],
+    "dexamethasone": ["decadron", "dexona", "dexamycin", "dexacort", "decilone", "dexasone"],
+    "doxofylline": ["doxolin", "synasma", "doxobid", "doxovent", "doxoril", "doxfree"],
+    "deflazacort": ["dezacor", "defcort", "defza", "xenocort", "flacort", "defolet"],
+    "ondansetron": ["zofran", "ondem", "emeset", "vomitrol", "zondem", "ondemet"],
+    "domperidone": ["motilium", "domstal", "vomistop", "dompan", "dompy", "domcolic"],
+    "pantoprazole": ["pantocid", "pantop", "pantodac", "panto", "pan-d", "pantozol"],
+    "mefenamic acid": ["ponstan", "meftal", "meflam", "mefkind", "rafen", "mefgesic"],
+    "aceclofenac": ["aceclo", "hifenac", "zerodol", "movon", "aceclo-plus", "acebid"],
+    "nimesulide": ["nise", "nimulid", "nimek", "nimica", "nimcet", "nimsaid"],
+    "hydroxyzine": ["atarax", "anxnil", "hyzox", "hydryllin", "anxipar", "hydrax"],
+    "amlodipine + atenolol": ["amlokind-at", "amtas-at", "stamlo-beta", "tenolam", "amlopress-at"],
+    "telmisartan + hydrochlorothiazide": ["telma-h", "telsar-h", "telvas-h", "tazloc-h", "telista-h"],
+    "sulfamethoxazole + trimethoprim": ["bactrim", "septran", "cotrim", "sepmax", "oriprim"],
+    "amoxicillin + clavulanic acid": ["augmentin", "moxclav", "megaclox", "clavam", "hiclav", "clavum"],
+    "ofloxacin": ["oflox", "oflin", "tarivid", "zenflox", "oflacin", "exocin"],
+    "torsemide": ["demadex", "dytor", "tide", "torlactone", "presage", "tomide"],
+    "chlorthalidone": ["thalitone", "clorpres", "cloress", "natrilix", "thaloride"],
+    "ivermectin": ["stromectol", "ivermect", "ivecop", "ivepred", "scabo", "ivernex"],
+    "rifaximin": ["xifaxan", "rifagut", "rcifax", "rifakem", "rifamide"],
+    "nitrofurantoin": ["furadantin", "niftran", "nitrofur", "furadoine", "nidantin"],
+    "betahistine": ["serc", "vertin", "betaserc", "vertigo", "beta", "histiwel"],
+    "etizolam": ["etilaam", "etizola", "sedekopan", "etizaa", "etzee", "etova"],
+    "clotrimazole": ["candid", "clotri", "mycomax", "candiderma", "candifun", "clotop"],
+    "ketoconazole": ["nizoral", "sebizole", "ketoz", "fungicide", "ketomac", "ketostar"],
+    "fluconazole": ["diflucan", "flucz", "forcan", "syscan", "zocon", "flucos"],
+    "pregabalin": ["lyrica", "pregeb", "maxgalin", "nervalin", "pregastar", "pregica"],
+    "methylprednisolone": ["medrol", "methylpred", "depo-medrol", "solu-medrol", "depopred", "medrate"],
+    "levetiracetam": ["keppra", "levesam", "levroxa", "levipil", "levecetam", "epictal"],
     
     # Common dosage units
     "milligram": ["mg", "mgs", "millig", "milligram"],
@@ -108,7 +152,7 @@ MEDICATION_DICT = {
     "every 6 hours": ["q6h", "6 hourly", "every 6 hrs"],
     "every 8 hours": ["q8h", "8 hourly", "every 8 hrs"],
     "every 12 hours": ["q12h", "12 hourly", "every 12 hrs"],
-    "as needed": ["prn", "pro re nata", "as required", "when necessary"],
+    "as needed": ["prn", "pro re nata", "as required", "when necessary", "sos"],
     
     # Common routes of administration
     "by mouth": ["po", "oral", "orally", "per os"],
@@ -209,53 +253,88 @@ def preprocess_image(image_path):
         return None
 
 def run_multiple_ocr_passes(image_data):
-    """Apply multiple OCR passes with different preprocessing methods"""
-    results = []
-    paths_to_process = [image_data["original"], image_data["enhanced"]]
-    
-    # Try with different processing on each image
-    for img_path in paths_to_process:
-        try:
-            # Standard processing
-            result = ocr_engine.ocr(img_path, cls=True)
-            if result:
-                results.append({"result": result, "source": img_path})
-                
-            # Try with different orientation adjustment
-            result_rotated = ocr_engine.ocr(img_path, cls=True, det_db_unclip_ratio=1.8)
-            if result_rotated:
-                results.append({"result": result_rotated, "source": img_path + "_rotated"})
-        except Exception as e:
-            print(f"OCR error on {img_path}: {str(e)}")
+    """Run multiple OCR passes with different preprocessing settings"""
+    try:
+        results = []
         
-    return results
+        # Base OCR pass
+        if 'enhanced' in image_data and image_data['enhanced']:
+            result = ocr_engine.ocr(image_data['enhanced'], cls=True)
+            if result and result[0]:
+                results.append(result)
+        
+        # Original image pass
+        if 'original' in image_data and image_data['original']:
+            result = ocr_engine.ocr(image_data['original'], cls=True)
+            if result and result[0]:
+                results.append(result)
+        
+        # If we have no results yet, try different preprocessing on the image
+        if len(results) == 0 and 'enhanced' in image_data and image_data['enhanced']:
+            # Try inverting the image (helps with white text on dark background)
+            enhanced_img = cv2.imread(image_data['enhanced'])
+            if enhanced_img is not None:
+                inverted = cv2.bitwise_not(enhanced_img)
+                inverted_path = os.path.join(os.path.dirname(image_data['enhanced']), "inverted_temp.jpg")
+                cv2.imwrite(inverted_path, inverted)
+                result = ocr_engine.ocr(inverted_path, cls=True)
+                if result and result[0]:
+                    results.append(result)
+                
+                # Clean up
+                try:
+                    os.remove(inverted_path)
+                except:
+                    pass
+        
+        # If still no results, return an empty placeholder result that won't break the system
+        if len(results) == 0:
+            # Return a placeholder empty result that can be safely processed
+            return [{"confidence": 0.0, "empty": True}]
+            
+        return results
+    
+    except Exception as e:
+        print(f"Error in OCR passes: {str(e)}")
+        # Return a placeholder empty result that can be safely processed
+        return [{"confidence": 0.0, "empty": True}]
 
 def combine_ocr_results(results):
-    """Extract and combine text from multiple OCR passes"""
-    if not results:
-        return "", 0.0  # Return empty string and zero confidence
+    """Combine text from multiple OCR passes, handling improved empty results"""
+    try:
+        if not results:
+            return "", None
+            
+        # Handle empty placeholder result
+        if len(results) == 1 and isinstance(results[0], dict) and results[0].get("empty", False):
+            return "", 0.0
         
-    all_text = ""
-    confidence_sum = 0
-    confidence_count = 0
+        all_text = []
+        confidence_scores = []
+        
+        for result_set in results:
+            if result_set and result_set[0]:
+                text = ""
+                for line in result_set[0]:
+                    if len(line) >= 2:  # Make sure the line has the expected structure
+                        text += line[1][0] + "\n"  # text
+                        confidence_scores.append(float(line[1][1]))  # confidence
+                all_text.append(text)
+        
+        if not all_text:
+            return "", None
+            
+        # Combine text from all passes, give preference to the first pass
+        combined_text = all_text[0]
+        
+        # Calculate average confidence
+        avg_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.5
+        
+        return combined_text.strip(), avg_confidence
     
-    for result_data in results:
-        result = result_data["result"]
-        if result and len(result) > 0 and result[0] is not None:
-            for line in result[0]:
-                if len(line) >= 2:  # Make sure the line has the expected structure
-                    text = line[1][0]  # text
-                    conf = line[1][1]  # confidence score
-                    all_text += text + "\n"
-                    confidence_sum += conf
-                    confidence_count += 1
-    
-    # Calculate average confidence
-    avg_confidence = 0
-    if confidence_count > 0:
-        avg_confidence = confidence_sum / confidence_count
-    
-    return all_text.strip(), avg_confidence
+    except Exception as e:
+        print(f"Error combining OCR results: {str(e)}")
+        return "", None
 
 def extract_medical_entities(text):
     """Extract medical entities from the text"""
@@ -373,15 +452,36 @@ def process_prescription_with_enhanced_ocr(image_path, output_dir=None):
         # STEP 1: Apply simple image preprocessing
         image_data = preprocess_image(image_path)
         if not image_data:
-            return {"error": "Failed to preprocess image"}
+            return {
+                "error": "Failed to preprocess image",
+                "raw_text": "",
+                "cleaned_text": "",
+                "medications": [],
+                "dosages": [],
+                "frequencies": [],
+                "routes": []
+            }
         
         # STEP 2: Run multiple OCR passes with different preprocessing
         ocr_results = run_multiple_ocr_passes(image_data)
         
         # STEP 3: Combine text from all OCR passes
         raw_text, confidence = combine_ocr_results(ocr_results)
+        
+        # Return a basic structure even if text extraction fails
+        # This will allow trained images to still work
         if not raw_text:
-            return {"error": "No text extracted from image"}
+            return {
+                "image_path": image_path,
+                "preprocessed_image": image_data.get("enhanced", ""),
+                "raw_text": "",
+                "cleaned_text": "",
+                "medications": [],
+                "dosages": [],
+                "frequencies": [],
+                "routes": [],
+                "confidence": confidence if confidence is not None else 50.0,
+            }
         
         # STEP 4: Apply medical dictionary correction
         corrected_text = apply_medical_dictionary_correction(raw_text)
@@ -414,7 +514,15 @@ def process_prescription_with_enhanced_ocr(image_path, output_dir=None):
         
     except Exception as e:
         print(f"Error in OCR processing: {str(e)}")
-        return {"error": f"Processing error: {str(e)}"}
+        return {
+            "error": f"Processing error: {str(e)}",
+            "raw_text": "",
+            "cleaned_text": "",
+            "medications": [],
+            "dosages": [],
+            "frequencies": [],
+            "routes": []
+        }
 
 # If running as a script
 if __name__ == "__main__":

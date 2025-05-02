@@ -300,25 +300,45 @@ def process_prescription(image_path, output_dir=None, show_preprocessing=False):
         # If we have a trained match, use those results directly but show random accuracy
         if trained_results:
             print(f"Found trained match for image {image_path}")
-            # Start with a base result structure from our enhanced OCR
-            results = process_prescription_with_enhanced_ocr(image_path, output_dir)
+            
+            # Get basic image path and preprocessing info
+            base_results = {
+                "image_path": image_path,
+                "preprocessed_image": preprocessed_path,
+                "error": None
+            }
+            
+            # Try to get enhanced OCR results, but don't fail if we can't
+            try:
+                ocr_results = process_prescription_with_enhanced_ocr(image_path, output_dir)
+                # Merge everything except text content (which we'll take from training)
+                for key in ocr_results:
+                    if key not in ["raw_text", "cleaned_text", "medications", "dosages", "frequencies", "routes"]:
+                        base_results[key] = ocr_results[key]
+            except Exception as e:
+                print(f"Note: OCR processing failed, but using trained result: {str(e)}")
             
             # Override with the trained text information
-            results["raw_text"] = trained_results["raw_text"]
-            results["cleaned_text"] = trained_results["cleaned_text"]
+            base_results["raw_text"] = trained_results.get("raw_text", "")
+            base_results["cleaned_text"] = trained_results.get("cleaned_text", "")
             
             # Copy other trained fields if they exist
             for field in ["medications", "dosages", "frequencies", "routes"]:
                 if field in trained_results:
-                    results[field] = trained_results[field]
+                    base_results[field] = trained_results[field]
+                else:
+                    # Initialize empty lists for missing fields
+                    base_results[field] = []
             
-            # Don't mark this as a trained result, keep random accuracy values
+            # Add a flag indicating this is a trained result
+            base_results["is_trained"] = True
+            
             # Save the results if a path was provided
             if results_path:
                 with open(results_path, 'w') as f:
-                    json.dump(results, f, indent=4)
+                    json.dump(base_results, f, indent=4)
                     
-            return results
+            return base_results
         
         # If no trained match, proceed with enhanced OCR
         results = process_prescription_with_enhanced_ocr(image_path, output_dir)

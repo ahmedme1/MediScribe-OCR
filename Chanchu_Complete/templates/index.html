@@ -767,10 +767,10 @@ body {
                         </div>
                         
                         <div class="workflow-nav mt-4">
-                            <button class="btn btn-sm active" data-screen="1" style="background-color: #00DBDE; color: white;">1</button>
-                            <button class="btn btn-sm btn-outline-light" data-screen="2" style="border-color: #FC00FF; color: #FC00FF;">2</button>
-                            <button class="btn btn-sm btn-outline-light" data-screen="3" style="border-color: #00DBDE; color: #00DBDE;">3</button>
-                            <button class="btn btn-sm btn-outline-light" data-screen="4" style="border-color: #FC00FF; color: #FC00FF;">4</button>
+                            <button class="btn btn-sm active" data-screen="1" style="background-color: #00DBDE; color: white; width: 30px; height: 38px; border-radius: 50%; margin: 0 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">1</button>
+                            <button class="btn btn-sm" data-screen="2" style="background-color: white; border: 2px solid #FC00FF; color: #FC00FF; width: 30px; height: 38px; border-radius: 50%; margin: 0 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">2</button>
+                            <button class="btn btn-sm" data-screen="3" style="background-color: white; border: 2px solid #00DBDE; color: #00DBDE; width: 30px; height: 38px; border-radius: 50%; margin: 0 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">3</button>
+                            <button class="btn btn-sm" data-screen="4" style="background-color: white; border: 2px solid #FC00FF; color: #FC00FF; width: 30px; height: 38px; border-radius: 50%; margin: 0 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">4</button>
                         </div>
                     </div>
                 </div>
@@ -1050,40 +1050,69 @@ body {
         });
     });
 
-    // Workflow demo interaction
+    // Workflow demo functionality - click on cards
     document.querySelectorAll('.workflow-card').forEach(card => {
         card.addEventListener('click', () => {
             const stepNumber = card.getAttribute('data-step');
             setActiveWorkflowScreen(stepNumber);
         });
     });
-
+    
+    // Workflow nav button click
     document.querySelectorAll('.workflow-nav button').forEach(button => {
-        button.addEventListener('click', () => {
-            const screenNumber = button.getAttribute('data-screen');
-            setActiveWorkflowScreen(screenNumber);
+        button.addEventListener('click', function() {
+            const screenNum = this.getAttribute('data-screen');
+            setActiveWorkflowScreen(screenNum);
+            // Stop auto-rotation when user clicks navigation
+            clearInterval(workflowInterval);
         });
     });
-
+    
+    // Function to set active workflow screen and update button styles
     function setActiveWorkflowScreen(number) {
+        // Hide all screens
         document.querySelectorAll('.workflow-screen').forEach(screen => {
             screen.classList.remove('active');
         });
         
+        // Show selected screen
         document.getElementById(`workflow-screen-${number}`).classList.add('active');
         
-        document.querySelectorAll('.workflow-nav button').forEach(button => {
-            button.classList.remove('active');
-            button.style.backgroundColor = '';
-            button.style.color = '';
+        // Update button styles
+        document.querySelectorAll('.workflow-nav button').forEach(btn => {
+            // Reset styles for all buttons
+            if (btn.getAttribute('data-screen') === '1') {
+                btn.style.backgroundColor = 'white';
+                btn.style.color = '#00DBDE';
+                btn.style.border = '2px solid #00DBDE';
+                btn.classList.remove('active');
+            } else if (btn.getAttribute('data-screen') === '3') {
+                btn.style.backgroundColor = 'white';
+                btn.style.color = '#00DBDE';
+                btn.style.border = '2px solid #00DBDE';
+                btn.classList.remove('active');
+            } else {
+                btn.style.backgroundColor = 'white';
+                btn.style.color = '#FC00FF';
+                btn.style.border = '2px solid #FC00FF';
+                btn.classList.remove('active');
+            }
         });
         
+        // Style the active button
         const activeButton = document.querySelector(`.workflow-nav button[data-screen="${number}"]`);
+        if (number === '1' || number === '3' || number === 1 || number === 3) {
+            activeButton.style.backgroundColor = '#00DBDE';
+            activeButton.style.color = 'white';
+            activeButton.style.border = 'none';
+        } else {
+            activeButton.style.backgroundColor = '#FC00FF';
+            activeButton.style.color = 'white'; 
+            activeButton.style.border = 'none';
+        }
         activeButton.classList.add('active');
-        activeButton.style.backgroundColor = '#00DBDE';
-        activeButton.style.color = 'white';
     }
-
+    
     // Auto-rotate workflow screens every 5 seconds
     let currentScreen = 1;
     const maxScreens = 4;
