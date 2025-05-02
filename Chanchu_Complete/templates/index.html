@@ -3,19 +3,42 @@
 {% block title %}MediScribe AI - Where Handwriting Meets Healthcare Intelligence{% endblock %}
 
 {% block custom_css %}
+/* Animated gradient background */
+body {
+    background: linear-gradient(-45deg, #3b82f6, #14b8a6, #3b82f6, #22c55e);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.content-wrapper {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
 .drop-container {
     border: 2px dashed var(--primary);
     border-radius: 12px;
     padding: 2.5rem;
     text-align: center;
-    background-color: rgba(59, 130, 246, 0.05);
+    background-color: rgba(59, 130, 246, 0.1);
     transition: all 0.4s;
     position: relative;
     cursor: pointer;
 }
 
 .drop-container:hover {
-    background-color: rgba(59, 130, 246, 0.1);
+    background-color: rgba(59, 130, 246, 0.2);
     border-color: var(--primary-dark);
     transform: scale(1.01);
 }
@@ -229,7 +252,7 @@
     margin-top: 5rem;
     text-align: center;
     padding: 3rem 2rem;
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
     border-radius: 20px;
     box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
 }
@@ -485,269 +508,271 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-10 mx-auto" id="upload-section">
-        <div class="steps-container">
-            <div class="step active" id="step1">
-                <div class="step-number">1</div>
-                <div class="step-text">Upload Prescription</div>
+<div class="content-wrapper">
+    <div class="row">
+        <div class="col-lg-10 mx-auto" id="upload-section">
+            <div class="steps-container">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Upload Prescription</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Add Patient Info</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Process Results</div>
+                </div>
             </div>
-            <div class="step" id="step2">
-                <div class="step-number">2</div>
-                <div class="step-text">Add Patient Info</div>
-            </div>
-            <div class="step" id="step3">
-                <div class="step-number">3</div>
-                <div class="step-text">Process Results</div>
-            </div>
-        </div>
-        
-        <div class="card mb-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Upload Prescription</span>
-                <span class="badge bg-info">Enhanced OCR</span>
-            </div>
-            <div class="card-body">
-                <form id="prescription-form" action="/upload" method="post" enctype="multipart/form-data">
-                    <div id="drop-area" class="drop-container mb-4">
-                        <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
-                        <h4>Drag & Drop Prescription Image</h4>
-                        <p>or click to browse files</p>
-                        <input type="file" id="prescription_image" name="prescription_image" class="d-none" accept=".jpg,.jpeg,.png,.tif,.tiff">
-                        <img id="preview" class="d-none">
-                        <p class="file-info mt-2 d-none" id="file-info"></p>
-                        
-                        <div class="progress-container">
-                            <div class="progress-bar" id="upload-progress"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mb-3">
-                        <button type="button" id="camera-btn" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-camera me-2"></i>Capture with Camera
-                        </button>
-                        <button type="button" id="next-step-btn" class="btn btn-primary" disabled>
-                            <i class="fas fa-arrow-right me-2"></i>Next Step
-                        </button>
-                    </div>
-                    
-                    <div id="camera-container" class="mb-4">
-                        <video id="camera-view" autoplay></video>
-                        <div class="camera-controls">
-                            <button type="button" id="capture-btn" class="btn btn-primary">
-                                <i class="fas fa-camera me-2"></i>Take Photo
-                            </button>
-                            <button type="button" id="cancel-camera-btn" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </button>
-                        </div>
-                        <canvas id="canvas" style="display:none;"></canvas>
-                    </div>
-                    
-                    <div class="prescription-details" style="display: none;">
-                        <h5 class="mb-3">Patient & Doctor Information</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="patient_name" class="form-label">Patient Name <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="patient_name" name="patient_name" placeholder="Enter patient name" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="doctor_name" class="form-label">Doctor Name <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user-md"></i></span>
-                                    <input type="text" class="form-control" id="doctor_name" name="doctor_name" placeholder="Enter doctor name" required>
-                                </div>
-                            </div>
-                            <div class="col-12 text-center mt-3">
-                                <div class="toggle-advanced" id="toggle-advanced">
-                                    <i class="fas fa-cog"></i> Advanced Options
-                                </div>
+            
+            <div class="card mb-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Upload Prescription</span>
+                    <span class="badge bg-info">Enhanced OCR</span>
+                </div>
+                <div class="card-body">
+                    <form id="prescription-form" action="/upload" method="post" enctype="multipart/form-data">
+                        <div id="drop-area" class="drop-container mb-4">
+                            <i class="fas fa-cloud-upload-alt upload-icon pulse"></i>
+                            <h4>Drag & Drop Prescription Image</h4>
+                            <p>or click to browse files</p>
+                            <input type="file" id="prescription_image" name="prescription_image" class="d-none" accept=".jpg,.jpeg,.png,.tif,.tiff">
+                            <img id="preview" class="d-none">
+                            <p class="file-info mt-2 d-none" id="file-info"></p>
+                            
+                            <div class="progress-container">
+                                <div class="progress-bar" id="upload-progress"></div>
                             </div>
                         </div>
                         
-                        <div class="advanced-options" id="advanced-options">
+                        <div class="text-center mb-3">
+                            <button type="button" id="camera-btn" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-camera me-2"></i>Capture with Camera
+                            </button>
+                            <button type="button" id="next-step-btn" class="btn btn-primary" disabled>
+                                <i class="fas fa-arrow-right me-2"></i>Next Step
+                            </button>
+                        </div>
+                        
+                        <div id="camera-container" class="mb-4">
+                            <video id="camera-view" autoplay></video>
+                            <div class="camera-controls">
+                                <button type="button" id="capture-btn" class="btn btn-primary">
+                                    <i class="fas fa-camera me-2"></i>Take Photo
+                                </button>
+                                <button type="button" id="cancel-camera-btn" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                            </div>
+                            <canvas id="canvas" style="display:none;"></canvas>
+                        </div>
+                        
+                        <div class="prescription-details" style="display: none;">
+                            <h5 class="mb-3">Patient & Doctor Information</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="prescription_date" class="form-label">Prescription Date</label>
+                                    <label for="patient_name" class="form-label">Patient Name <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                        <input type="date" class="form-control" id="prescription_date" name="prescription_date">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="patient_name" name="patient_name" placeholder="Enter patient name" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="ocr_mode" class="form-label">OCR Precision</label>
-                                    <div class="tooltip-container">
-                                        <select class="form-select" id="ocr_mode" name="ocr_mode">
-                                            <option value="standard" selected>Standard</option>
-                                            <option value="enhanced">Enhanced (Slower)</option>
-                                            <option value="strict">Strict Medical Terms Only</option>
-                                        </select>
-                                        <span class="tooltip-text">Choose 'Enhanced' for better accuracy with difficult handwriting. 'Strict' mode focuses only on medical terms.</span>
+                                    <label for="doctor_name" class="form-label">Doctor Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user-md"></i></span>
+                                        <input type="text" class="form-control" id="doctor_name" name="doctor_name" placeholder="Enter doctor name" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 text-center mt-3">
+                                    <div class="toggle-advanced" id="toggle-advanced">
+                                        <i class="fas fa-cog"></i> Advanced Options
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="advanced-options" id="advanced-options">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="prescription_date" class="form-label">Prescription Date</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                            <input type="date" class="form-control" id="prescription_date" name="prescription_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="ocr_mode" class="form-label">OCR Precision</label>
+                                        <div class="tooltip-container">
+                                            <select class="form-select" id="ocr_mode" name="ocr_mode">
+                                                <option value="standard" selected>Standard</option>
+                                                <option value="enhanced">Enhanced (Slower)</option>
+                                                <option value="strict">Strict Medical Terms Only</option>
+                                            </select>
+                                            <span class="tooltip-text">Choose 'Enhanced' for better accuracy with difficult handwriting. 'Strict' mode focuses only on medical terms.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" id="back-btn" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="submit-btn">
+                                    <i class="fas fa-search me-2"></i>Process Prescription
+                                </button>
+                            </div>
                         </div>
-                        
-                        <div class="text-center mt-4">
-                            <button type="button" id="back-btn" class="btn btn-outline-secondary me-2">
-                                <i class="fas fa-arrow-left me-2"></i>Back
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="submit-btn">
-                                <i class="fas fa-search me-2"></i>Process Prescription
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <div class="features mt-5">
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-icon"><i class="fas fa-brain"></i></div>
-                <h4>Enhanced OCR</h4>
-                <p>Advanced OCR technology specifically tuned for handwritten medical prescriptions with 95% accuracy</p>
+                    </form>
+                </div>
             </div>
             
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-                <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-                <h4>Training Mode</h4>
-                <p>Train the system with your prescriptions for improved accuracy on future uploads</p>
-            </div>
-            
-            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
-                <div class="feature-icon"><i class="fas fa-pills"></i></div>
-                <h4>Medication Detection</h4>
-                <p>Automatically identifies medications, dosages, and frequencies from prescriptions</p>
-            </div>
-        </div>
-        
-        <div class="demo-section" id="demo-section" data-aos="fade-up">
-            <h2>See MediScribe AI in Action</h2>
-            <p class="lead">How MediScribe transforms handwritten prescriptions into digital data</p>
-            
-            <div class="workflow-steps mt-5">
-                <div class="row">
-                    <div class="col-md-3 mb-4">
-                        <div class="workflow-card" data-step="1">
-                            <div class="workflow-icon">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                            <h5>Upload</h5>
-                            <p>Upload or capture a prescription using your device camera.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-4">
-                        <div class="workflow-card" data-step="2">
-                            <div class="workflow-icon">
-                                <i class="fas fa-magic"></i>
-                            </div>
-                            <h5>Process</h5>
-                            <p>Our AI engine processes and enhances the image for optimal recognition.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-4">
-                        <div class="workflow-card" data-step="3">
-                            <div class="workflow-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h5>Extract</h5>
-                            <p>Advanced OCR extracts text and identifies medications, dosages, and frequencies.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-4">
-                        <div class="workflow-card" data-step="4">
-                            <div class="workflow-icon">
-                                <i class="fas fa-file-medical-alt"></i>
-                            </div>
-                            <h5>Results</h5>
-                            <p>View detailed results with medication information and export options.</p>
-                        </div>
-                    </div>
+            <div class="features mt-5">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h4>Enhanced OCR</h4>
+                    <p>Advanced OCR technology specifically tuned for handwritten medical prescriptions with 95% accuracy</p>
                 </div>
                 
-                <div class="workflow-demo mt-5">
-                    <div class="workflow-demo-container">
-                        <div class="workflow-screen active" id="workflow-screen-1">
-                            <img src="https://via.placeholder.com/600x350/f8fafc/0f172a?text=Upload+Prescription" class="img-fluid rounded shadow">
-                            <div class="workflow-caption">
-                                <h5>Step 1: Upload Prescription</h5>
-                                <p>Drag and drop or use your camera to capture the prescription image</p>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h4>Training Mode</h4>
+                    <p>Train the system with your prescriptions for improved accuracy on future uploads</p>
+                </div>
+                
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-icon"><i class="fas fa-pills"></i></div>
+                    <h4>Medication Detection</h4>
+                    <p>Automatically identifies medications, dosages, and frequencies from prescriptions</p>
+                </div>
+            </div>
+            
+            <div class="demo-section" id="demo-section" data-aos="fade-up">
+                <h2>See MediScribe AI in Action</h2>
+                <p class="lead">How MediScribe transforms handwritten prescriptions into digital data</p>
+                
+                <div class="workflow-steps mt-5">
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="workflow-card" data-step="1">
+                                <div class="workflow-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <h5>Upload</h5>
+                                <p>Upload or capture a prescription using your device camera.</p>
                             </div>
                         </div>
-                        <div class="workflow-screen" id="workflow-screen-2">
-                            <img src="https://via.placeholder.com/600x350/f1f5f9/0f172a?text=Image+Processing" class="img-fluid rounded shadow">
-                            <div class="workflow-caption">
-                                <h5>Step 2: Image Processing</h5>
-                                <p>Our system enhances the image for better text recognition</p>
+                        <div class="col-md-3 mb-4">
+                            <div class="workflow-card" data-step="2">
+                                <div class="workflow-icon">
+                                    <i class="fas fa-magic"></i>
+                                </div>
+                                <h5>Process</h5>
+                                <p>Our AI engine processes and enhances the image for optimal recognition.</p>
                             </div>
                         </div>
-                        <div class="workflow-screen" id="workflow-screen-3">
-                            <img src="https://via.placeholder.com/600x350/e2e8f0/0f172a?text=Text+Extraction" class="img-fluid rounded shadow">
-                            <div class="workflow-caption">
-                                <h5>Step 3: Text Extraction</h5>
-                                <p>AI identifies medications, dosages, and instructions</p>
+                        <div class="col-md-3 mb-4">
+                            <div class="workflow-card" data-step="3">
+                                <div class="workflow-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <h5>Extract</h5>
+                                <p>Advanced OCR extracts text and identifies medications, dosages, and frequencies.</p>
                             </div>
                         </div>
-                        <div class="workflow-screen" id="workflow-screen-4">
-                            <img src="https://via.placeholder.com/600x350/cbd5e1/0f172a?text=Results+&+Export" class="img-fluid rounded shadow">
-                            <div class="workflow-caption">
-                                <h5>Step 4: Results & Export</h5>
-                                <p>View the digitized prescription and export as needed</p>
+                        <div class="col-md-3 mb-4">
+                            <div class="workflow-card" data-step="4">
+                                <div class="workflow-icon">
+                                    <i class="fas fa-file-medical-alt"></i>
+                                </div>
+                                <h5>Results</h5>
+                                <p>View detailed results with medication information and export options.</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="workflow-nav mt-4">
-                        <button class="btn btn-sm btn-primary active" data-screen="1">1</button>
-                        <button class="btn btn-sm btn-outline-primary" data-screen="2">2</button>
-                        <button class="btn btn-sm btn-outline-primary" data-screen="3">3</button>
-                        <button class="btn btn-sm btn-outline-primary" data-screen="4">4</button>
+                    <div class="workflow-demo mt-5">
+                        <div class="workflow-demo-container">
+                            <div class="workflow-screen active" id="workflow-screen-1">
+                                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=350&q=80" class="img-fluid rounded shadow" alt="Doctor writing prescription">
+                                <div class="workflow-caption">
+                                    <h5>Step 1: Upload Prescription</h5>
+                                    <p>Drag and drop or use your camera to capture the prescription image</p>
+                                </div>
+                            </div>
+                            <div class="workflow-screen" id="workflow-screen-2">
+                                <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=350&q=80" class="img-fluid rounded shadow" alt="Image processing">
+                                <div class="workflow-caption">
+                                    <h5>Step 2: Image Processing</h5>
+                                    <p>Our system enhances the image for better text recognition</p>
+                                </div>
+                            </div>
+                            <div class="workflow-screen" id="workflow-screen-3">
+                                <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=350&q=80" class="img-fluid rounded shadow" alt="AI analyzing text">
+                                <div class="workflow-caption">
+                                    <h5>Step 3: Text Extraction</h5>
+                                    <p>AI identifies medications, dosages, and instructions</p>
+                                </div>
+                            </div>
+                            <div class="workflow-screen" id="workflow-screen-4">
+                                <img src="https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=350&q=80" class="img-fluid rounded shadow" alt="Digital prescription results">
+                                <div class="workflow-caption">
+                                    <h5>Step 4: Results & Export</h5>
+                                    <p>View the digitized prescription and export as needed</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-nav mt-4">
+                            <button class="btn btn-sm btn-primary active" data-screen="1">1</button>
+                            <button class="btn btn-sm btn-outline-primary" data-screen="2">2</button>
+                            <button class="btn btn-sm btn-outline-primary" data-screen="3">3</button>
+                            <button class="btn btn-sm btn-outline-primary" data-screen="4">4</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="testimonials" data-aos="fade-up">
-            <h2 class="text-center mb-4">What Our Users Say</h2>
             
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="testimonial-card">
-                        <p>"MediScribe has saved our pharmacy hours of deciphering handwritten prescriptions. The accuracy is impressive!"</p>
-                        <div class="d-flex align-items-center mt-3">
-                            <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">JD</div>
-                            <div class="ms-3">
-                                <strong>John Doe</strong><br>
-                                <small>Pharmacist, MediCare Pharmacy</small>
+            <div class="testimonials" data-aos="fade-up">
+                <h2 class="text-center mb-4">What Our Users Say</h2>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="testimonial-card">
+                            <p>"MediScribe has saved our pharmacy hours of deciphering handwritten prescriptions. The accuracy is impressive!"</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">JD</div>
+                                <div class="ms-3">
+                                    <strong>John Doe</strong><br>
+                                    <small>Pharmacist, MediCare Pharmacy</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="testimonial-card">
-                        <p>"As a doctor with admittedly poor handwriting, this tool helps ensure my patients get the right medications every time."</p>
-                        <div class="d-flex align-items-center mt-3">
-                            <div class="bg-success rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">AS</div>
-                            <div class="ms-3">
-                                <strong>Dr. Amanda Smith</strong><br>
-                                <small>General Practitioner</small>
+                    
+                    <div class="col-md-4">
+                        <div class="testimonial-card">
+                            <p>"As a doctor with admittedly poor handwriting, this tool helps ensure my patients get the right medications every time."</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="bg-success rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">AS</div>
+                                <div class="ms-3">
+                                    <strong>Dr. Amanda Smith</strong><br>
+                                    <small>General Practitioner</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="testimonial-card">
-                        <p>"The medication detection feature is spot-on. We've integrated MediScribe into our hospital workflow with great results."</p>
-                        <div class="d-flex align-items-center mt-3">
-                            <div class="bg-info rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">RJ</div>
-                            <div class="ms-3">
-                                <strong>Robert Johnson</strong><br>
-                                <small>Hospital Administrator</small>
+                    
+                    <div class="col-md-4">
+                        <div class="testimonial-card">
+                            <p>"The medication detection feature is spot-on. We've integrated MediScribe into our hospital workflow with great results."</p>
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="bg-info rounded-circle text-white d-flex align-items-center justify-content-center" style="width:50px;height:50px;">RJ</div>
+                                <div class="ms-3">
+                                    <strong>Robert Johnson</strong><br>
+                                    <small>Hospital Administrator</small>
+                                </div>
                             </div>
                         </div>
                     </div>

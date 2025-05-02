@@ -314,7 +314,13 @@
                         {% endif %}
                         <div>
                             <div class="d-flex align-items-center">
-                                <h5 class="mb-1">{% if result.patient_name %}{{ result.patient_name }}{% else %}Prescription #{{ loop.index }}{% endif %}</h5>
+                                <h5 class="mb-1">
+                                {% if result.patient_name and result.patient_name != 'Unknown Patient' %}
+                                    {{ result.patient_name }}
+                                {% else %}
+                                    Prescription #{{ result.timestamp|int|string|truncate(8, True, '') }}
+                                {% endif %}
+                                </h5>
                                 {% if result.accuracy is defined and result.accuracy and result.accuracy is mapping and result.accuracy.overall_accuracy is defined %}
                                 <span class="badge bg-success accuracy-pill ms-2">{{ result.accuracy.overall_accuracy }}%</span>
                                 {% else %}
