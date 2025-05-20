@@ -17,6 +17,13 @@ The system utilizes a combination of:
 - Machine learning models for character recognition
 - Training capabilities for continuous improvement
 
+## ▶️ Output Video
+
+  
+https://github.com/user-attachments/assets/ef7ecab9-5f57-4b09-b7d8-c5d26931a3bb
+
+
+
 ## 🔍 Core Features
 
 ### Advanced Image Preprocessing
@@ -112,8 +119,7 @@ http://localhost:5000
 
 - **Accuracy**: 95%+ for trained images, 90%+ for untrained prescriptions
 - **Processing Time**: Average 3-5 seconds per prescription
-- **Medication Recognition**: 92% accuracy on standard medications
-- **Error Reduction**: 80% decrease in interpretation errors
+- **Medication Recognition**: 70%+ accuracy on standard medications
 
 ## 📁 Project Structure
 
@@ -132,7 +138,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📬 Contact
 
-For any questions or feedback, please reach out to [your email address].
+For any questions or inquiries, please contact Shriram2005 at [mange.shriram@gmail.com](mange.shriram@gmail.com).
 
 ## 🙏 Acknowledgements
 
