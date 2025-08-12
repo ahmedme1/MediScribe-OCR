@@ -12,3 +12,4 @@ fuzzywuzzy
 python-Levenshtein
 scikit-image
 fpdf
+setuptools
